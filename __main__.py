@@ -97,7 +97,6 @@ def create_shortcut(path, image):
 
     if file_name == containing_folder_name:
         path = f"{head}\\_{tail}"
-        print(path)
 
     shell = win32com.client.Dispatch("WScript.Shell")
     shortcut = shell.CreateShortCut(path)
