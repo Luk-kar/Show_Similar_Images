@@ -4,14 +4,13 @@ import win32com.client
 
 from compare_two_images import compare_images
 
-_argv = sys.argv
 
-
-def get_dir_output():
+def get_dir_output(target_path):
 
     dir_output = os.path.abspath(f"{target_path}\\similar images")
     if not os.path.isdir(dir_output):
         os.mkdir(dir_output)
+
     return dir_output
 
 
@@ -42,7 +41,7 @@ def get_similar_images(paths_files_source, paths_files_target):
     for source_path_file in paths_files_source:
         for target_path_file in paths_files_target:
             ssim = compare_images(source_path_file, target_path_file)
-            if ssim > similarity and target_path_file != source_path_file:
+            if ssim > similarity:
                 similar_images[source_path_file].append(target_path_file)
 
     return similar_images
@@ -63,43 +62,59 @@ def create_dir_for_similar_images(path_to_shortcuts):
         os.mkdir(path_to_shortcuts)
 
 
+def get_path_for_shortcut(image, path_to_shortcuts):
+
+    image_file = os.path.basename(image)
+    image_name = os.path.splitext(image_file)[0]
+    path = os.path.join(path_to_shortcuts, f'{image_name}.lnk')
+
+    return path
+
+
 def create_shortcuts_of_similar_images(similar_images, dir_output):
 
-    for i in similar_images:
+    for image_list in similar_images:
 
-        if similar_images[i] != []:
+        if len(similar_images[image_list]) > 1:
 
-            path_to_shortcuts = get_dir_path(i)
+            path_to_shortcuts = get_dir_path(image_list)
             create_dir_for_similar_images(path_to_shortcuts)
 
-            for image in similar_images[i]:
+            for image in similar_images[image_list]:
 
-                image_file = os.path.basename(image)
-                image_name = os.path.splitext(image_file)[0]
-                path = os.path.join(path_to_shortcuts, f'{image_name}.lnk')
+                path = get_path_for_shortcut(image, path_to_shortcuts)
 
-                shell = win32com.client.Dispatch("WScript.Shell")
-                shortcut = shell.CreateShortCut(path)
-                shortcut.Targetpath = image
-                shortcut.WindowStyle = 3
-                shortcut.save()
+                create_shortcut(path, image)
 
 
-if len(_argv) == 2:
+def create_shortcut(path, image):
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shortcut = shell.CreateShortCut(path)
+    shortcut.Targetpath = image
+    shortcut.WindowStyle = 3
+    shortcut.save()
 
-    valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
-    target_path = _argv[1]
-    similarity = 0.8
 
-    paths_files_source = get_images_paths(target_path, valid_extensions)
+if __name__ == "__main__":
 
-    paths_files_target = paths_files_source.copy()
+    _argv = sys.argv
 
-    similar_images = get_similar_images(paths_files_source, paths_files_target)
+    if len(_argv) == 2:
 
-    dir_output = get_dir_output()
+        valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
+        target_path = _argv[1]
+        similarity = 0.8
 
-    create_shortcuts_of_similar_images(similar_images, dir_output)
+        paths_files_source = get_images_paths(target_path, valid_extensions)
 
-else:
-    print("wrong input")
+        paths_files_target = paths_files_source.copy()
+
+        similar_images = get_similar_images(
+            paths_files_source, paths_files_target)
+
+        dir_output = get_dir_output(target_path)
+
+        create_shortcuts_of_similar_images(similar_images, dir_output)
+
+    else:
+        print("wrong input")
