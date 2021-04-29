@@ -7,7 +7,7 @@ from compare_two_images import compare_images
 
 def get_dir_output(target_path):
 
-    dir_output = os.path.abspath(f"{target_path}\\similar images")
+    dir_output = os.path.abspath(f"{target_path}\\_similar images")
     if not os.path.isdir(dir_output):
         os.mkdir(dir_output)
 
@@ -88,6 +88,17 @@ def create_shortcuts_of_similar_images(similar_images, dir_output):
 
 
 def create_shortcut(path, image):
+
+    head, tail = os.path.split(path)
+    file_name, ext = os.path.splitext(tail)
+
+    file_name = file_name.rsplit('\\', 1)[-1]
+    containing_folder_name = head.rsplit('\\', 1)[-1]
+
+    if file_name == containing_folder_name:
+        path = f"{head}\\_{tail}"
+        print(path)
+
     shell = win32com.client.Dispatch("WScript.Shell")
     shortcut = shell.CreateShortCut(path)
     shortcut.Targetpath = image
