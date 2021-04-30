@@ -2,6 +2,7 @@ import os
 import win32com.client
 
 from compare_two_images import compare_images
+import config as default_values
 
 
 def get_dir_output(target_path):
@@ -106,6 +107,16 @@ def create_shortcut(path, image):
 
 
 def find_similar_images(target_path, valid_extensions, similarity):
+
+    if not os.path.isdir(target_path):
+        raise ValueError("invalid folder path")
+
+    if not valid_extensions.split(",") in default_values.valid_extensions:
+        raise ValueError(
+            f"invalid extensions: {default_values.valid_extensions}")
+
+    if 0 > float(similarity) > 1:
+        raise ValueError("invalid value, it should be between 0.0 and 1.0")
 
     if target_path:
 

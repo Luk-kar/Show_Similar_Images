@@ -1,5 +1,6 @@
 import sys
 
+import config as default_value
 from find_similar_images import find_similar_images
 from UI.MainGUIApp import MainGUIApp
 
@@ -15,13 +16,13 @@ def parse_extensions(_argv):
 def run_console(_argv):
 
     if len(_argv) <= 2:
-        valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
+        valid_extensions = default_value.valid_extensions
         _argv.append(valid_extensions)
     else:
         _argv[2] = parse_extensions(_argv[2])
 
     if len(_argv) <= 3:
-        similarity = 0.8
+        similarity = default_value.similarity
         _argv.append(similarity)
     else:
         _argv[3] = float(_argv[3])
