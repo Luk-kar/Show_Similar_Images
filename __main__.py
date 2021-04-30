@@ -26,7 +26,7 @@ def get_images_paths(target_path, valid_extensions):
     return paths_files_source
 
 
-def init_similar_images():
+def init_similar_images(paths_files_source):
     similar_images = {}
     for source_path_file in paths_files_source:
         similar_images[source_path_file] = []
@@ -34,20 +34,21 @@ def init_similar_images():
     return similar_images
 
 
-def get_similar_images(paths_files_source, paths_files_target):
+def get_similar_images(paths_files_source, paths_files_target, similarity_desired):
 
-    similar_images = init_similar_images()
+    similar_images = init_similar_images(paths_files_source)
 
     for source_path_file in paths_files_source:
         for target_path_file in paths_files_target:
-            ssim = compare_images(source_path_file, target_path_file)
-            if ssim > similarity:
+            similarity_computed = compare_images(
+                source_path_file, target_path_file)
+            if similarity_computed > similarity_desired:
                 similar_images[source_path_file].append(target_path_file)
 
     return similar_images
 
 
-def get_dir_path(image_path):
+def get_dir_path(image_path, dir_output):
 
     filename = os.path.basename(image_path)
     dir_name = os.path.splitext(filename)[0]
@@ -77,7 +78,7 @@ def create_shortcuts_of_similar_images(similar_images, dir_output):
 
         if len(similar_images[image_list]) > 1:
 
-            path_to_shortcuts = get_dir_path(image_list)
+            path_to_shortcuts = get_dir_path(image_list, dir_output)
             create_dir_for_similar_images(path_to_shortcuts)
 
             for image in similar_images[image_list]:
@@ -105,9 +106,7 @@ def create_shortcut(path, image):
     shortcut.save()
 
 
-if __name__ == "__main__":
-
-    _argv = sys.argv
+def main(_argv):
 
     if len(_argv) == 2:
 
@@ -120,7 +119,7 @@ if __name__ == "__main__":
         paths_files_target = paths_files_source.copy()
 
         similar_images = get_similar_images(
-            paths_files_source, paths_files_target)
+            paths_files_source, paths_files_target, similarity)
 
         dir_output = get_dir_output(target_path)
 
@@ -128,3 +127,10 @@ if __name__ == "__main__":
 
     else:
         print("wrong input")
+
+
+if __name__ == "__main__":
+
+    _argv = sys.argv
+
+    main(_argv)
