@@ -111,14 +111,22 @@ def find_similar_images(target_path, valid_extensions, similarity):
     if not os.path.isdir(target_path):
         raise ValueError("invalid folder path")
 
-    if not valid_extensions.split(",") in default_values.valid_extensions:
+    valid_extensions = valid_extensions.split(",")
+    if len(valid_extensions) == 0:
         raise ValueError(
-            f"invalid extensions: {default_values.valid_extensions}")
+            f"no provided extensions: {default_values.valid_extensions}")
 
-    if 0 > float(similarity) > 1:
+    for ext in valid_extensions:
+        if ext not in default_values.valid_extensions:
+            raise ValueError(
+                f"invalid extensions: {default_values.valid_extensions}")
+
+    if float(similarity) < 0 or float(similarity) > 1:
         raise ValueError("invalid value, it should be between 0.0 and 1.0")
 
     if target_path:
+
+        valid_extensions = tuple(valid_extensions)
 
         paths_files_source = get_images_paths(target_path, valid_extensions)
 

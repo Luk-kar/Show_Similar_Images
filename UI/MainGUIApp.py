@@ -1,5 +1,8 @@
 import tkinter as tk
 
+from find_similar_images import find_similar_images
+from tkinter import messagebox
+
 
 class Demo1:
     def __init__(self, master):
@@ -40,8 +43,15 @@ class Demo1:
 
         target_path = self.target_path_entry.get()
         valid_extensions = ",".join(extensions_to_use).replace("/", ",")
-        similarity = self.similarity_entry.get()
-        print(target_path, valid_extensions, similarity)
+        similarity = float(self.similarity_entry.get())
+
+        try:
+            find_similar_images(target_path, valid_extensions, similarity)
+            messagebox.showinfo(
+                "Succes!", f"Now look for your target directory for results!\n{target_path}")
+            # open folder todo
+        except ValueError as e:
+            messagebox.showerror("Error!", e)
 
 
 class Checkbar(tk.Frame):
