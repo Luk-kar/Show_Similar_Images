@@ -133,8 +133,6 @@ if __name__ == "__main__":
 
     _argv = sys.argv
 
-    print(type(_argv[3]))
-
     if len(_argv) <= 2:
         valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
         _argv.append(valid_extensions)
