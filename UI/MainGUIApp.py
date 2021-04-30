@@ -31,7 +31,17 @@ class Demo1:
         self.frame.grid()
 
     def new_window(self):
-        print(list(self.checkbars.state()))
+
+        extensions_to_use = []
+        checkedboxes = list(self.checkbars.state())
+        for count, box in enumerate(checkedboxes):
+            if box == 1:
+                extensions_to_use.append(self.extensions[count])
+
+        target_path = self.target_path_entry.get()
+        valid_extensions = ",".join(extensions_to_use).replace("/", ",")
+        similarity = self.similarity_entry.get()
+        print(target_path, valid_extensions, similarity)
 
 
 class Checkbar(tk.Frame):
