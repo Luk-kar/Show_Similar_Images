@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
+import sys
+import os
+import platform
+import subprocess
 
 from find_similar_images import find_similar_images
 from config import set_app_path, similarity as default_similarity
@@ -12,6 +16,9 @@ class Demo1:
         master.title("Find similar images")
         master.iconbitmap(
             f"{set_app_path()}UI/assets/app.ico")
+
+        menubar = MenuBar(master)
+        master.config(menu=menubar)
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
@@ -34,7 +41,7 @@ class Demo1:
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
         self.extensions_title.grid(row=2, column=0, pady=(15, 0), stick="w")
 
-        self.extensions = [".png", ".jpg/.jpeg", ".bmp"]
+        self.extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         self.checkbars = Checkbar(self.frame, self.extensions)
         self.checkbars.grid(row=3, column=0, pady=(0, 15), stick="w")
 
@@ -87,10 +94,85 @@ class Demo1:
         try:
             find_similar_images(target_path, valid_extensions, similarity)
             messagebox.showinfo(
-                "Succes!", f"Now look for your target directory for results!\n{target_path}")
-            # open folder todo
+                "Success!", f"Now look for your target directory for results!\n{target_path}")
+            self.open_folder(target_path)
         except ValueError as e:
             messagebox.showerror("Error!", e)
+
+    def open_folder(self, path):
+        """open folder in file explorer, depending on platfrom"""
+
+        if platform.system() == "Windows":
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
+
+
+class MenuBar(tk.Menu):
+    def __init__(self, parent):
+        tk.Menu.__init__(self, parent)
+
+        setupMenu = tk.Menu(self, tearoff=False)
+        self.add_cascade(label="Setup", underline=0, menu=setupMenu)
+        setupMenu.add_command(label="Save as", command=self.setup_save_as)
+        setupMenu.add_command(label="Open", command=self.setup_open)
+        setupMenu.add_command(label="Save to defaults",
+                              command=self.setup_save)
+        setupMenu.add_command(label="Reset to defaults",
+                              command=self.setup_reset_to_defaults)
+        setupMenu.add_command(label="Defaults reset",
+                              command=self.setup_default_reset)
+        setupMenu.add_separator()
+        setupMenu.add_command(label="Exit", underline=1, command=self.quit)
+
+    def quit(self):
+        sys.exit(0)
+
+    def setup_save_as(self, parent):
+
+        frame = parent.frame
+
+        ini_default_location = os.path.join(set_app_path(), "appData")
+        checkedboxes = list(frame.checkbars.state())
+        target_path = frame.target_path_entry.get()
+        similarity = float(frame.similarity_entry.get())
+
+        print(ini_default_location, checkedboxes, target_path, similarity)
+        # output_path = filedialog.asksaveasfilename(
+        #     initialdir=ini_default_location,
+        #     title="Save setup file",
+        #     filetypes=[("Setup files", "*.ini")]
+        # )
+
+        # if output_path:
+        #     setup_saving(
+        #         output_path,
+        #         frame.source_entry.get(),
+        #         frame.target_entry.get(),
+        #         frame.mode.get(),
+        #         frame.output_entry.get(),
+        #         frame.width_entry.get(),
+        #         frame.by_ratio.get(),
+        #     )
+
+        messagebox.showinfo(
+            "Done!",
+            "You saved setup file in:"f"\n{output_path}"
+        )
+
+    def setup_open(self):
+        pass
+
+    def setup_save(self):
+        pass
+
+    def setup_reset_to_defaults(self):
+        pass
+
+    def setup_default_reset(self):
+        pass
 
 
 class Checkbar(tk.Frame):
@@ -98,8 +180,8 @@ class Checkbar(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.vars = []
         for pick in picks:
-            var = tk.IntVar()
-            chk = tk.Checkbutton(self, text=pick, variable=var)
+            var = tk.IntVar(value=pick[1])
+            chk = tk.Checkbutton(self, text=pick[0], variable=var)
             chk.pack(side=side, anchor=anchor, expand=tk.YES)
             self.vars.append(var)
 
