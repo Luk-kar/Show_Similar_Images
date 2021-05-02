@@ -1,39 +1,63 @@
 import tkinter as tk
+from tkinter import filedialog  # for Python 3
+from tkinter import messagebox
 
 from find_similar_images import find_similar_images
-from tkinter import messagebox
+from config import set_app_path
 
 
 class Demo1:
     def __init__(self, master):
         self.master = master
         master.title("Find similar images")
-        master.geometry("400x400")
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
-        self.target_path_title = tk.Label(self.frame, text="Target images")
-        self.target_path_title.grid(column=0, row=0)
+        self.target_path_title = tk.Label(self.frame, text="Target images:")
+        self.target_path_title.grid(row=0, column=0, stick="w")
 
         self.target_path_entry = tk.Entry(self.frame)
-        self.target_path_entry.grid(column=0, row=1)
+        self.target_path_entry.grid(row=1, column=0, stick="we")
+
+        self.img_open_folder = tk.PhotoImage(
+            file=f"{set_app_path()}UI/assets/open_folder.gif")
+        self.button_choose_folder = tk.Button(
+            self.frame, command=self.source_btn_folder_open)
+        self.button_choose_folder.config(image=self.img_open_folder)
+        self.button_choose_folder.grid(
+            column=1, row=1, pady=(0, 5), stick="w")
 
         self.extensions = [".png", ".jpg/.jpeg", ".bmp"]
         self.checkbars = Checkbar(self.frame, self.extensions)
-        self.checkbars.grid(column=0, row=2)
+        self.checkbars.grid(row=2, column=0, pady=10)
 
-        self.similarity_title = tk.Label(self.frame, text="Similarity")
-        self.similarity_title.grid(column=0, row=3)
+        self.similarity_title = tk.Label(self.frame, text="Similarity:")
+        self.similarity_title.grid(row=3, column=0, stick="w")
 
         self.similarity_entry = tk.Entry(self.frame)
-        self.similarity_entry.grid(column=0, row=4)
+        self.similarity_entry.grid(row=4, column=0, stick="w")
 
         self.button1 = tk.Button(
-            self.frame, text='Find similar images', width=25, command=self.new_window)
-        self.button1.grid(column=0, row=5)
-        self.frame.grid()
+            self.master, text='Find similar images', width=25, command=self.run_matching_images)
+        self.button1.grid(row=1, column=0, pady=(0, 15), padx=10, stick="we")
+        self.frame.grid(row=0, column=0)
 
-    def new_window(self):
+    def source_btn_folder_open(self):
+
+        self.btn_find_path(self.target_path_entry,
+                           lambda: filedialog.askdirectory(
+                               title="Source folder")
+                           )
+
+    def btn_find_path(self, entry, askpath):
+
+        path = askpath()
+        if path:
+            entry.delete(0, tk.END)
+            entry.insert(0, path)
+            entry.config(fg='black')
+
+    def run_matching_images(self):
 
         extensions_to_use = []
         checkedboxes = list(self.checkbars.state())
