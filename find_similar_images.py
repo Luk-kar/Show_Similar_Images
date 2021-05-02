@@ -44,6 +44,7 @@ def get_similar_images(paths_files_source, paths_files_target, similarity_desire
                 source_path_file, target_path_file)
             if similarity_computed > similarity_desired:
                 similar_images[source_path_file].append(target_path_file)
+                paths_files_source.remove(target_path_file)
 
     return similar_images
 
