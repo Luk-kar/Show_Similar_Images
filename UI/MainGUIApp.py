@@ -18,9 +18,13 @@ class Main:
         master.iconbitmap(
             f"{set_app_path()}UI/assets/app.ico")
 
+        config = ConfigParser()
+        config.read(os.path.join(set_app_path(), "appData", "_DEFAULT.ini"))
+        config.sections()
+
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
-        self.target_path_title = tk.Label(self.frame, text="Images path:")
+        self.target_path_title = tk.Label(self.frame, text="images path:")
         self.target_path_title.grid(row=0, column=0, stick="w")
 
         self.target_path_placeholder = "Enter your folder path..."
@@ -28,6 +32,8 @@ class Main:
             self.frame, self.target_path_placeholder)
         self.target_path_entry
         self.target_path_entry.grid(row=1, column=0, ipadx=200, stick="we")
+        self.set_entry_value(self.target_path_entry,
+                             config["MATCHING"]["images path"])
 
         self.img_open_folder = tk.PhotoImage(
             file=f"{set_app_path()}UI/assets/open_folder.gif")
@@ -40,7 +46,11 @@ class Main:
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
         self.extensions_title.grid(row=2, column=0, pady=(15, 0), stick="w")
 
-        self.extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+        self.extensions = [  # todo
+            [".png", config["FILE TYPES"][".png"]],
+            [".jpg/.jpeg", config["FILE TYPES"][".jpg/.jpeg"]],
+            [".bmp", config["FILE TYPES"][".bmp"]]
+        ]
         self.checkbars = Checkbar(self.frame, self.extensions)
         self.checkbars.grid(row=3, column=0, pady=(0, 15), stick="w")
 
@@ -50,7 +60,8 @@ class Main:
         self.similarity_entry = EntryWithPlaceholder(
             self.frame, "Enter value from 0.0 to 1.0")
         self.similarity_entry.grid(row=5, column=0, ipadx=10, stick="w")
-        self.set_entry_value(self.similarity_entry, default_similarity)
+        self.set_entry_value(self.similarity_entry,
+                             config["MINIMAL SIMILARITY"]["value"])
 
         self.button1 = tk.Button(
             self.master, text='Find similar images', width=25, bg="#f5f5f5", command=self.run_matching_images)
@@ -238,20 +249,13 @@ class MenuBar(tk.Menu):
             similarity
         )
 
-        messagebox.showinfo(
-            "Done!",
-            "You saved setup file in:"f"\n{setup_path}"
-        )
-
     def setup_reset_to_defaults(self):
         setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
 
         if not os.path.exists(setup_file):
-            setup_file = os.path.join(
-                self.ini_default_location, "_DEFAULT.ini")
 
             valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
-            checkedboxes = map(lambda x: x[1], valid_extensions)
+            checkedboxes = list(map(lambda x: x[1], valid_extensions))
             target_path = ""
             similarity = 0.8
 
@@ -268,21 +272,18 @@ class MenuBar(tk.Menu):
     def setup_default_reset(self):
         setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
 
-        if not os.path.exists(setup_file):
-            setup_file = os.path.join(
-                self.ini_default_location, "_DEFAULT.ini")
+        valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+        # https://stackoverflow.com/a/6800507/12490791
+        checkedboxes = list(map(lambda x: x[1], valid_extensions))
+        target_path = ""
+        similarity = 0.8
 
-            valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
-            checkedboxes = map(lambda x: x[1], valid_extensions)
-            target_path = ""
-            similarity = 0.8
-
-            self.setup_saving(
-                setup_file,
-                checkedboxes,
-                target_path,
-                similarity
-            )
+        self.setup_saving(
+            setup_file,
+            checkedboxes,
+            target_path,
+            similarity
+        )
 
         config = self.read_config_file(setup_file)
         self.dialogs_set_setup(config)
