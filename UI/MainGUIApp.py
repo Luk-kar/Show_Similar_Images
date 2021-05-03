@@ -20,7 +20,6 @@ class Main:
 
         config = ConfigParser()
         config.read(os.path.join(set_app_path(), "appData", "_DEFAULT.ini"))
-        config.sections()
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
