@@ -1,13 +1,14 @@
+from configparser import ConfigParser
+import os
+import sys
 import tkinter as tk
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
-import sys
-import os
-import platform
-import subprocess
 
+from config import set_app_path
+from config import similarity as default_similarity
 from find_similar_images import find_similar_images
-from config import set_app_path, similarity as default_similarity
+from UI.helpers.open_folder import open_folder
 
 
 class Main:
@@ -22,8 +23,9 @@ class Main:
         self.target_path_title = tk.Label(self.frame, text="Images path:")
         self.target_path_title.grid(row=0, column=0, stick="w")
 
+        self.target_path_placeholder = "Enter your folder path..."
         self.target_path_entry = EntryWithPlaceholder(
-            self.frame, "Enter your folder path...")
+            self.frame, self.target_path_placeholder)
         self.target_path_entry
         self.target_path_entry.grid(row=1, column=0, ipadx=200, stick="we")
 
@@ -89,7 +91,7 @@ class Main:
             find_similar_images(target_path, valid_extensions, similarity)
             messagebox.showinfo(
                 "Success!", f"Now look for your target directory for results!\n{target_path}")
-            self.open_folder(target_path)
+            open_folder(target_path)
         except ValueError as e:
             messagebox.showerror("Error!", e)
 
@@ -119,15 +121,26 @@ class Main:
 
         return valid_extensions
 
-    def open_folder(self, path):
-        """open folder in file explorer, depending on platfrom"""
+    def entry_set(self, entry, entry_content):
 
-        if platform.system() == "Windows":
-            os.startfile(path)
-        elif platform.system() == "Darwin":
-            subprocess.Popen(["open", path])
+        entry = self.entry_set_text(entry, entry_content)
+
+        if entry_content != self.target_path_placeholder:
+            entry.config(fg='black')
         else:
-            subprocess.Popen(["xdg-open", path])
+            entry.config(fg='grey')
+
+        return entry
+
+    def entry_set_text(self, entry, text):
+
+        entry.delete(0, "end")
+        entry.insert(
+            0,
+            text
+        )
+
+        return entry
 
 
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
@@ -136,6 +149,7 @@ class MenuBar(tk.Menu):
         tk.Menu.__init__(self, parent)
 
         self.main = main
+        self.ini_default_location = os.path.join(set_app_path(), "appData")
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)
@@ -143,7 +157,7 @@ class MenuBar(tk.Menu):
             label="Save as", command=self.setup_save_as)
         setupMenu.add_command(label="Open", command=self.setup_open)
         setupMenu.add_command(label="Save to defaults",
-                              command=self.setup_save)
+                              command=self.setup_save_to_defaults)
         setupMenu.add_command(label="Reset to defaults",
                               command=self.setup_reset_to_defaults)
         setupMenu.add_command(label="Defaults reset",
@@ -156,43 +170,180 @@ class MenuBar(tk.Menu):
 
     def setup_save_as(self):
 
-        ini_default_location = os.path.join(set_app_path(), "appData")
-        output_path = filedialog.asksaveasfilename(
-            initialdir=ini_default_location,
+        main = self.main
+
+        setup_path = filedialog.asksaveasfilename(
+            initialdir=self.ini_default_location,
             title="Save setup file",
             filetypes=[("Setup files", "*.ini")]
         )
 
-        if output_path:
-            checkedboxes = list(self.main.checkbars.state())
-            target_path = self.main.target_path_entry.get()
-            similarity = float(self.main.similarity_entry.get())
+        if setup_path:
+            checkedboxes = list(main.checkbars.state())
+            target_path = main.target_path_entry.get()
+            similarity = float(main.similarity_entry.get())
 
-            print(ini_default_location, checkedboxes, target_path, similarity)
+            self.setup_saving(
+                setup_path,
+                checkedboxes,
+                target_path,
+                similarity
+            )
 
             messagebox.showinfo(
                 "Done!",
-                "You saved setup file in:"f"\n{output_path}"
+                "You saved setup file in:"f"\n{setup_path}"
             )
+
+            setup_folder = os.path.dirname(setup_path)
+            open_folder(setup_folder)
 
         else:
 
             messagebox.showinfo(
                 "Ouch!",
-                "You haven't choose any folder"
+                "You haven't choose any folder!"
             )
 
     def setup_open(self):
-        pass
 
-    def setup_save(self):
-        pass
+        setup_file = filedialog.askopenfilename(
+            initialdir=self.ini_default_location,
+            title="Open setup file",
+            filetypes=[("Setup files", "*.ini")]
+        )
+
+        if setup_file:
+            config = self.read_config_file(setup_file)
+            self.dialogs_set_setup(config)
+        else:
+            messagebox.showinfo(
+                "Ouch!",
+                "You haven't choose any file!"
+            )
+
+    def setup_save_to_defaults(self):
+
+        main = self.main
+
+        setup_path = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+        checkedboxes = list(main.checkbars.state())
+        target_path = main.target_path_entry.get()
+        similarity = float(main.similarity_entry.get())
+
+        self.setup_saving(
+            setup_path,
+            checkedboxes,
+            target_path,
+            similarity
+        )
+
+        messagebox.showinfo(
+            "Done!",
+            "You saved setup file in:"f"\n{setup_path}"
+        )
 
     def setup_reset_to_defaults(self):
-        pass
+        setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+
+        if not os.path.exists(setup_file):
+            setup_file = os.path.join(
+                self.ini_default_location, "_DEFAULT.ini")
+
+            valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+            checkedboxes = map(lambda x: x[1], valid_extensions)
+            target_path = ""
+            similarity = 0.8
+
+            self.setup_saving(
+                setup_file,
+                checkedboxes,
+                target_path,
+                similarity
+            )
+
+        config = self.read_config_file(setup_file)
+        self.dialogs_set_setup(config)
 
     def setup_default_reset(self):
-        pass
+        setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+
+        if not os.path.exists(setup_file):
+            setup_file = os.path.join(
+                self.ini_default_location, "_DEFAULT.ini")
+
+            valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+            checkedboxes = map(lambda x: x[1], valid_extensions)
+            target_path = ""
+            similarity = 0.8
+
+            self.setup_saving(
+                setup_file,
+                checkedboxes,
+                target_path,
+                similarity
+            )
+
+        config = self.read_config_file(setup_file)
+        self.dialogs_set_setup(config)
+
+    def dialogs_set_setup(self, config):
+
+        main = self.main
+
+        main.target_path_entry = main.entry_set(
+            main.target_path_entry, config.get("MATCHING", "images path")
+        )
+
+        picks = config.items("FILE TYPES")
+        main.checkbars.set_state(picks)
+
+        main.similarity_entry = main.entry_set(
+            main.similarity_entry, config.get("MINIMAL SIMILARITY", "value")
+        )
+
+    def read_config_file(self, file):
+        """return string"""
+
+        config = ConfigParser()
+
+        try:
+            with open(file) as f:
+                config.read_file(f)
+        except IOError as error:
+            raise IOError(error)
+
+        return config
+
+    def setup_saving(
+            self,
+            setup_path,
+            checkedboxes,
+            target_path,
+            similarity
+    ):
+
+        config = ConfigParser()
+
+        config["MATCHING"] = {
+            "images path": target_path,
+        }
+
+        config["FILE TYPES"] = {
+            ".png": checkedboxes[0],
+            ".jpg/.jpeg": checkedboxes[1],
+            ".bmp": checkedboxes[2]
+        }
+
+        config["MINIMAL SIMILARITY"] = {
+            "value": similarity,
+        }
+
+        if setup_path:
+            with open(setup_path, "w") as configfile:
+                config.write(configfile)
+        else:
+            raise OSError("There is no save path")
 
 
 class Checkbar(tk.Frame):
@@ -207,6 +358,13 @@ class Checkbar(tk.Frame):
 
     def state(self):
         return map((lambda var: var.get()), self.vars)
+
+    def set_state(self, picks):
+
+        for count, pick in enumerate(picks):
+            self.vars[count].set(pick[1])
+
+        return self.vars
 
 
 class EntryWithPlaceholder(tk.Entry):
