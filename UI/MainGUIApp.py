@@ -83,7 +83,7 @@ class Main:
 
         valid_extensions = self.get_extensions()
         target_path = self.target_path_entry.get()
-        similarity = float(self.similarity_entry.get())
+        similarity = self.similarity_entry.get()
 
         try:
             find_similar_images(target_path, valid_extensions, similarity)

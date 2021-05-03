@@ -124,12 +124,7 @@ def find_similar_images(target_path, valid_extensions, similarity):
                 raise ValueError(
                     f"Extension {ext} is invalid.\n Look at: {default_values.valid_extensions}.")
 
-    for ext in valid_extensions:
-        if ext not in default_values.valid_extensions:
-            raise ValueError(
-                f"Invalid extensions: {default_values.valid_extensions}")
-
-    if float(similarity) < 0 or float(similarity) > 1:
+    if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
         raise ValueError("Invalid value, it should be between 0.0 and 1.0.")
 
     if target_path:
