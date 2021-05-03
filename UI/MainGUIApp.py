@@ -10,15 +10,12 @@ from find_similar_images import find_similar_images
 from config import set_app_path, similarity as default_similarity
 
 
-class Demo1:
+class Main:
     def __init__(self, master):
         self.master = master
         master.title("Find similar images")
         master.iconbitmap(
             f"{set_app_path()}UI/assets/app.ico")
-
-        menubar = MenuBar(master)
-        master.config(menu=menubar)
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
@@ -60,6 +57,9 @@ class Demo1:
 
         self.frame.grid(row=0, column=0)
 
+        menubar = MenuBar(master, self)
+        master.config(menu=menubar)
+
     def source_btn_folder_open(self):
 
         self.btn_find_path(self.target_path_entry,
@@ -81,14 +81,8 @@ class Demo1:
 
     def run_matching_images(self):
 
-        extensions_to_use = []
-        checkedboxes = list(self.checkbars.state())
-        for count, box in enumerate(checkedboxes):
-            if box == 1:
-                extensions_to_use.append(self.extensions[count])
-
+        valid_extensions = self.get_extensions()
         target_path = self.target_path_entry.get()
-        valid_extensions = ",".join(extensions_to_use).replace("/", ",")
         similarity = float(self.similarity_entry.get())
 
         try:
@@ -98,6 +92,32 @@ class Demo1:
             self.open_folder(target_path)
         except ValueError as e:
             messagebox.showerror("Error!", e)
+
+    def get_extensions(self):
+
+        def get_checkboxes_values(self):
+
+            extensions_to_use = []
+            checkedboxes = list(self.checkbars.state())
+            for count, box in enumerate(checkedboxes):
+                if box == 1:
+                    extensions_to_use.append(self.extensions[count])
+
+            return extensions_to_use
+
+        def convert_values_into_cli_arg(extensions_to_use):
+            valid_extension = []
+            for ext in extensions_to_use:
+                valid_extension.append(ext[0])
+
+            valid_extensions = ",".join(valid_extension).replace("/", ",")
+            return valid_extensions
+
+        extensions_to_use = get_checkboxes_values(self)
+
+        valid_extensions = convert_values_into_cli_arg(extensions_to_use)
+
+        return valid_extensions
 
     def open_folder(self, path):
         """open folder in file explorer, depending on platfrom"""
@@ -110,13 +130,17 @@ class Demo1:
             subprocess.Popen(["xdg-open", path])
 
 
+# https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
 class MenuBar(tk.Menu):
-    def __init__(self, parent):
+    def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
+
+        self.main = main
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)
-        setupMenu.add_command(label="Save as", command=self.setup_save_as)
+        setupMenu.add_command(
+            label="Save as", command=self.setup_save_as)
         setupMenu.add_command(label="Open", command=self.setup_open)
         setupMenu.add_command(label="Save to defaults",
                               command=self.setup_save)
@@ -130,37 +154,33 @@ class MenuBar(tk.Menu):
     def quit(self):
         sys.exit(0)
 
-    def setup_save_as(self, parent):
-
-        frame = parent.frame
+    def setup_save_as(self):
 
         ini_default_location = os.path.join(set_app_path(), "appData")
-        checkedboxes = list(frame.checkbars.state())
-        target_path = frame.target_path_entry.get()
-        similarity = float(frame.similarity_entry.get())
-
-        print(ini_default_location, checkedboxes, target_path, similarity)
-        # output_path = filedialog.asksaveasfilename(
-        #     initialdir=ini_default_location,
-        #     title="Save setup file",
-        #     filetypes=[("Setup files", "*.ini")]
-        # )
-
-        # if output_path:
-        #     setup_saving(
-        #         output_path,
-        #         frame.source_entry.get(),
-        #         frame.target_entry.get(),
-        #         frame.mode.get(),
-        #         frame.output_entry.get(),
-        #         frame.width_entry.get(),
-        #         frame.by_ratio.get(),
-        #     )
-
-        messagebox.showinfo(
-            "Done!",
-            "You saved setup file in:"f"\n{output_path}"
+        output_path = filedialog.asksaveasfilename(
+            initialdir=ini_default_location,
+            title="Save setup file",
+            filetypes=[("Setup files", "*.ini")]
         )
+
+        if output_path:
+            checkedboxes = list(self.main.checkbars.state())
+            target_path = self.main.target_path_entry.get()
+            similarity = float(self.main.similarity_entry.get())
+
+            print(ini_default_location, checkedboxes, target_path, similarity)
+
+            messagebox.showinfo(
+                "Done!",
+                "You saved setup file in:"f"\n{output_path}"
+            )
+
+        else:
+
+            messagebox.showinfo(
+                "Ouch!",
+                "You haven't choose any folder"
+            )
 
     def setup_open(self):
         pass
@@ -218,5 +238,5 @@ class EntryWithPlaceholder(tk.Entry):
 
 def MainGUIApp():
     root = tk.Tk()
-    app = Demo1(root)
+    app = Main(root)
     root.mainloop()
