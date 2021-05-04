@@ -11,7 +11,7 @@ from UI.helpers.open_folder import open_folder
 
 
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
-class MenuBar(tk.Menu):
+class SetupManu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 

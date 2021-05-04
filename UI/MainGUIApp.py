@@ -12,7 +12,7 @@ from find_similar_images import find_similar_images
 from UI.CheckBar import Checkbar
 from UI.EntryWithPlaceholder import EntryWithPlaceholder
 from UI.helpers.open_folder import open_folder
-from UI.MenuBar import MenuBar
+from UI.SetupMenu import SetupMenu
 
 
 class Main:
@@ -73,7 +73,7 @@ class Main:
 
         self.frame.grid(row=0, column=0)
 
-        menubar = MenuBar(master, self)
+        menubar = SetupMenu(master, self)
         master.config(menu=menubar)
 
     def source_btn_folder_open(self):
