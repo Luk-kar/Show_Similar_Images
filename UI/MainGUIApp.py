@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
-from config import set_app_path
+from config import Config
 from config import similarity as default_similarity
 from find_similar_images import find_similar_images
 
@@ -20,10 +20,11 @@ class Main:
         self.master = master
         master.title("Find similar images")
         master.iconbitmap(
-            f"{set_app_path()}UI/assets/app.ico")
+            f"{Config.set_app_path()}UI/assets/app.ico")
 
         config = ConfigParser()
-        config.read(os.path.join(set_app_path(), "appData", "_DEFAULT.ini"))
+        config.read(os.path.join(Config.set_app_path(),
+                                 "appData", "_DEFAULT.ini"))
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
@@ -39,7 +40,7 @@ class Main:
                              config["MATCHING"]["images path"])
 
         self.img_open_folder = tk.PhotoImage(
-            file=f"{set_app_path()}UI/assets/open_folder.gif")
+            file=f"{Config.set_app_path()}UI/assets/open_folder.gif")
         self.button_choose_folder = tk.Button(
             self.frame, command=self.source_btn_folder_open)
         self.button_choose_folder.config(image=self.img_open_folder)

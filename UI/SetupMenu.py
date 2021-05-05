@@ -5,18 +5,18 @@ from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
+from config import Config
 from UI.helpers.open_folder import open_folder
-import config as setup
+
 
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
-
-
 class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 
         self.main = main
-        self.ini_default_location = setup.get_DEFAULT_ini_path()
+        self.setup = Config()
+        self.ini_default_location = self.setup.get_DEFAULT_ini_path()
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)
@@ -39,14 +39,14 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = setup.get_save_file_ini_path()
+        setup_path = self.setup.get_save_file_ini_path()
 
         if setup_path:
             checkedboxes = list(main.checkbars.state())
             target_path = main.target_path_entry.get()
             similarity = float(main.similarity_entry.get())
 
-            setup.setup_saving_to_ini(
+            self.setup.setup_saving_to_ini(
                 setup_path,
                 checkedboxes,
                 target_path,
@@ -69,10 +69,10 @@ class SetupMenu(tk.Menu):
 
     def setup_open(self):
 
-        setup_path = setup.get_open_file_ini_path()
+        setup_path = self.setup.get_open_file_ini_path()
 
         if setup_path:
-            config = setup.read_config_file(setup_path)
+            config = self.setup.read_config_file(setup_path)
             self.dialogs_set_setup(config)
         else:
             messagebox.showinfo(
@@ -84,13 +84,13 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = os.path.join(
-            self.ini_default_location, setup.DEFAULTS_file_path)
+        setup_path = self.setup.DEFAULTS_file_path
+
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
 
-        setup.setup_saving_to_ini(
+        self.setup.setup_saving_to_ini(
             setup_path,
             checkedboxes,
             target_path,
@@ -98,23 +98,21 @@ class SetupMenu(tk.Menu):
         )
 
     def setup_reset_to_defaults(self):
-        setup_path = os.path.join(
-            self.ini_default_location, setup.DEFAULTS_file_path)
+        setup_path = self.setup.DEFAULTS_file_path
 
         if not os.path.exists(setup_path):
 
-            setup.create_DEFAULT_setup_file(setup_path)
+            self.setup.create_DEFAULT_setup_file()
 
-        config = setup.read_config_file(setup_path)
+        config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def setup_default_reset(self):
-        setup_path = os.path.join(
-            self.ini_default_location, setup.DEFAULTS_file_path)
+        setup_path = self.setup.DEFAULTS_file_path
 
-        setup.create_DEFAULT_setup_file(setup_path)
+        self.setup.create_DEFAULT_setup_file()
 
-        config = setup.read_config_file(setup_path)
+        config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def dialogs_set_setup(self, config):
@@ -122,12 +120,12 @@ class SetupMenu(tk.Menu):
         main = self.main
 
         main.target_path_entry = main.entry_set(
-            main.target_path_entry, setup.get_images_folder_path(config)
+            main.target_path_entry, self.setup.get_images_folder_path(config)
         )
 
-        picks = setup.get_checked_extensions(config)
+        picks = self.setup.get_checked_extensions(config)
         main.checkbars.set_state(picks)
 
         main.similarity_entry = main.entry_set(
-            main.similarity_entry, setup.get_similarity(config)
+            main.similarity_entry, self.setup.get_similarity(config)
         )

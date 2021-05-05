@@ -7,101 +7,106 @@ valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
 similarity = 0.8
 
 
-def get_DEFAULT_ini_path():
-    return os.path.join(set_app_path(), "appData")
+class Config:
+    def __init__(self):
+        self.DEFAULT_ini_path = os.path.abspath(self.get_DEFAULT_ini_path())
+        self.DEFAULTS_file_path = os.path.abspath(os.path.join(
+            self.DEFAULT_ini_path,
+            "_DEFAULT.ini"
+        ))
 
+    def get_DEFAULT_ini_path(self):
+        return os.path.join(self.set_app_path(), "appData")
 
-def get_save_file_ini_path():
-    return filedialog.asksaveasfilename(initialdir=get_DEFAULT_ini_path(), title="Save setup file", filetypes=[("Setup files", "*.ini")])
+    def get_save_file_ini_path(self):
+        return filedialog.asksaveasfilename(initialdir=self.DEFAULT_ini_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
 
+    def get_open_file_ini_path(self):
+        return filedialog.askopenfilename(initialdir=self.DEFAULT_ini_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
-def get_open_file_ini_path():
-    return filedialog.askopenfilename(initialdir=get_DEFAULT_ini_path(), title="Open setup file", filetypes=[("Setup files", "*.ini")])
+    @staticmethod
+    def setup_saving_to_ini(
+            setup_path,
+            checkedboxes,
+            target_path,
+            similarity
+    ):
 
+        config = ConfigParser()
 
-def setup_saving_to_ini(
-        setup_path,
-        checkedboxes,
-        target_path,
-        similarity
-):
+        config["MATCHING"] = {
+            "images path": target_path,
+        }
 
-    config = ConfigParser()
+        config["FILE TYPES"] = {
+            ".png": checkedboxes[0],
+            ".jpg/.jpeg": checkedboxes[1],
+            ".bmp": checkedboxes[2]
+        }
 
-    config["MATCHING"] = {
-        "images path": target_path,
-    }
+        config["MINIMAL SIMILARITY"] = {
+            "value": similarity,
+        }
 
-    config["FILE TYPES"] = {
-        ".png": checkedboxes[0],
-        ".jpg/.jpeg": checkedboxes[1],
-        ".bmp": checkedboxes[2]
-    }
+        if setup_path:
+            with open(setup_path, "w") as configfile:
+                config.write(configfile)
+        else:
+            raise OSError("There is no save path")
 
-    config["MINIMAL SIMILARITY"] = {
-        "value": similarity,
-    }
+    @staticmethod
+    def read_config_file(file):
+        """return string"""
 
-    if setup_path:
-        with open(setup_path, "w") as configfile:
-            config.write(configfile)
-    else:
-        raise OSError("There is no save path")
+        config = ConfigParser()
 
+        try:
+            with open(file) as f:
+                config.read_file(f)
+        except IOError as error:
+            raise IOError(error)
 
-def read_config_file(file):
-    """return string"""
+        return config
 
-    config = ConfigParser()
+    @staticmethod
+    def get_images_folder_path(config):
+        return config.get("MATCHING", "images path")
 
-    try:
-        with open(file) as f:
-            config.read_file(f)
-    except IOError as error:
-        raise IOError(error)
+    @staticmethod
+    def get_similarity(config):
+        return config.get("MINIMAL SIMILARITY", "value")
 
-    return config
+    @staticmethod
+    def get_checked_extensions(config):
+        return config.items("FILE TYPES")
 
+    def create_DEFAULT_setup_file(self):
 
-DEFAULTS_file_path = "_DEFAULT.ini"
+        setup_path = self.DEFAULTS_file_path
 
+        valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+        checkedboxes = list(map(lambda x: x[1], valid_extensions))
+        target_path = ""
+        similarity = 0.8
 
-def get_images_folder_path(config):
-    return config.get("MATCHING", "images path")
+        self.setup_saving_to_ini(
+            setup_path,
+            checkedboxes,
+            target_path,
+            similarity
+        )
 
+    @staticmethod
+    def set_app_path():
 
-def get_similarity(config):
-    return config.get("MINIMAL SIMILARITY", "value")
+        # https://stackoverflow.com/a/404750/12490791
+        program_name = sys.argv[0]
 
+        if getattr(sys, 'frozen', False) or program_name.endswith("__main__.py"):
+            application_path = ""  # relative ./
+        elif __file__:
+            application_path = f"{program_name}/"
+        else:
+            raise IOError("no path")
 
-def get_checked_extensions(config):
-    return config.items("FILE TYPES")
-
-
-def create_DEFAULT_setup_file(setup_path):
-    valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
-    checkedboxes = list(map(lambda x: x[1], valid_extensions))
-    target_path = ""
-    similarity = 0.8
-
-    setup_saving_to_ini(
-        setup_path,
-        checkedboxes,
-        target_path,
-        similarity
-    )
-
-
-def set_app_path():
-
-    # https://stackoverflow.com/a/404750/12490791
-    program_name = sys.argv[0]
-
-    if getattr(sys, 'frozen', False) or program_name.endswith("__main__.py"):
-        application_path = ""  # relative ./
-    elif __file__:
-        application_path = f"{program_name}/"
-    else:
-        raise IOError("no path")
-
-    return application_path
+        return application_path
