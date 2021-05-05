@@ -14,8 +14,12 @@ def get_defaults_ini():
     return os.path.join(set_app_path(), "appData")
 
 
-def get_setup_path(ini_default_location):
+def get_save_file_path(ini_default_location):
     return filedialog.asksaveasfilename(initialdir=ini_default_location, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+
+
+def get_open_file_path(ini_default_location):
+    return filedialog.askopenfilename(initialdir=ini_default_location, title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
 
 def setup_saving(
@@ -48,6 +52,35 @@ def setup_saving(
         raise OSError("There is no save path")
 
 
+def read_config_file(file):
+    """return string"""
+
+    config = ConfigParser()
+
+    try:
+        with open(file) as f:
+            config.read_file(f)
+    except IOError as error:
+        raise IOError(error)
+
+    return config
+
+
+DEFAULTS = "_DEFAULT.ini"
+
+
+def get_images_folder_path(config):
+    return config.get("MATCHING", "images path")
+
+
+def get_similarity(config):
+    return config.get("MINIMAL SIMILARITY", "value")
+
+
+def get_checked_extensions(config):
+    return config.items("FILE TYPES")
+
+
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
 class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
@@ -77,7 +110,7 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = get_setup_path(self.ini_default_location)
+        setup_path = get_save_file_path(self.ini_default_location)
 
         if setup_path:
             checkedboxes = list(main.checkbars.state())
@@ -108,14 +141,11 @@ class SetupMenu(tk.Menu):
 
     def setup_open(self):
 
-        setup_file = filedialog.askopenfilename(
-            initialdir=self.ini_default_location,
-            title="Open setup file",
-            filetypes=[("Setup files", "*.ini")]
-        )
+        setup_path = get_open_file_path(
+            self.ini_default_location)
 
-        if setup_file:
-            config = self.read_config_file(setup_file)
+        if setup_path:
+            config = read_config_file(setup_path)
             self.dialogs_set_setup(config)
         else:
             messagebox.showinfo(
@@ -128,7 +158,7 @@ class SetupMenu(tk.Menu):
         main = self.main
 
         setup_path = os.path.join(
-            self.ini_default_location, "_DEFAULT.ini")  # todo refactor config
+            self.ini_default_location, DEFAULTS)
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
@@ -141,9 +171,9 @@ class SetupMenu(tk.Menu):
         )
 
     def setup_reset_to_defaults(self):
-        setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+        setup_path = os.path.join(self.ini_default_location, DEFAULTS)
 
-        if not os.path.exists(setup_file):
+        if not os.path.exists(setup_path):
 
             valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
             checkedboxes = list(map(lambda x: x[1], valid_extensions))
@@ -151,17 +181,17 @@ class SetupMenu(tk.Menu):
             similarity = 0.8
 
             setup_saving(
-                setup_file,
+                setup_path,
                 checkedboxes,
                 target_path,
                 similarity
             )
 
-        config = self.read_config_file(setup_file)
+        config = read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def setup_default_reset(self):
-        setup_file = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+        setup_path = os.path.join(self.ini_default_location, DEFAULTS)
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         # https://stackoverflow.com/a/6800507/12490791
@@ -170,13 +200,13 @@ class SetupMenu(tk.Menu):
         similarity = 0.8
 
         setup_saving(
-            setup_file,
+            setup_path,
             checkedboxes,
             target_path,
             similarity
         )
 
-        config = self.read_config_file(setup_file)
+        config = read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def dialogs_set_setup(self, config):
@@ -184,25 +214,12 @@ class SetupMenu(tk.Menu):
         main = self.main
 
         main.target_path_entry = main.entry_set(
-            main.target_path_entry, config.get("MATCHING", "images path")
+            main.target_path_entry, get_images_folder_path(config)
         )
 
-        picks = config.items("FILE TYPES")
+        picks = get_checked_extensions(config)
         main.checkbars.set_state(picks)
 
         main.similarity_entry = main.entry_set(
-            main.similarity_entry, config.get("MINIMAL SIMILARITY", "value")
+            main.similarity_entry, get_similarity(config)
         )
-
-    def read_config_file(self, file):
-        """return string"""
-
-        config = ConfigParser()
-
-        try:
-            with open(file) as f:
-                config.read_file(f)
-        except IOError as error:
-            raise IOError(error)
-
-        return config
