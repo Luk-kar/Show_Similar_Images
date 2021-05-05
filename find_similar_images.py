@@ -3,11 +3,15 @@ import win32com.client
 
 from compare_two_images import compare_images
 import config as default_values
+from config import Config
+
+SIMILAR_IMAGES_FOLDER = "_similar images"
 
 
 def get_dir_output(target_path):
 
-    dir_output = os.path.abspath(f"{target_path}\\_similar images")
+    dir_output = os.path.abspath(os.path.join(
+        target_path, SIMILAR_IMAGES_FOLDER))
     if not os.path.isdir(dir_output):
         os.mkdir(dir_output)
 
@@ -107,22 +111,24 @@ def create_shortcut(path, image):
     shortcut.save()
 
 
-def find_similar_images(target_path, valid_extensions, similarity):
+def find_similar_images(target_path, extensions_chosen, similarity):
+
+    extensions_possible = get_possible_extensions()
 
     if not os.path.isdir(target_path):
         raise ValueError("Invalid folder path.")
     elif not target_path:
         raise ValueError("You didn't provide any path for your images.")
 
-    valid_extensions = valid_extensions.split(",")
-    if len(valid_extensions) == 0:
+    extensions_chosen = extensions_chosen.split(",")
+    if len(extensions_chosen) == 0:
         raise ValueError(
-            f"No provided extensions: {default_values.valid_extensions}")
+            f"No provided extensions: {extensions_possible}")
     else:
-        for ext in valid_extensions:
-            if ext not in default_values.valid_extensions:
+        for ext in extensions_chosen:
+            if ext not in extensions_possible:
                 raise ValueError(
-                    f"Extension {ext} is invalid.\n Look at: {default_values.valid_extensions}.")
+                    f"Extension {ext} is invalid.\n Look at: {extensions_possible}.")
 
     similarity_error_message = "Invalid value, it should be between 0.0 and 1.0."
     try:
@@ -134,9 +140,9 @@ def find_similar_images(target_path, valid_extensions, similarity):
 
     if target_path:
 
-        valid_extensions = tuple(valid_extensions)
+        extensions_chosen = tuple(extensions_chosen)
 
-        paths_files_source = get_images_paths(target_path, valid_extensions)
+        paths_files_source = get_images_paths(target_path, extensions_chosen)
 
         paths_files_target = paths_files_source.copy()
 
@@ -147,8 +153,22 @@ def find_similar_images(target_path, valid_extensions, similarity):
 
         create_shortcuts_of_similar_images(similar_images, dir_output)
 
-        founded_images_folder = os.path.join(target_path, "_similar images")
+        founded_images_folder = os.path.join(
+            target_path, SIMILAR_IMAGES_FOLDER)
         return founded_images_folder
 
     else:
         print("wrong input")
+
+
+def get_possible_extensions():
+
+    config = Config()
+    config_DEFAULT = config.read_config_file_DEFAULT()
+
+    extensions_default = []
+    extensions = config.get_checked_extensions(config_DEFAULT)
+    for ext in extensions:
+        extensions_default.append(ext[0])
+
+    return extensions_default

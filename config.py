@@ -3,9 +3,6 @@ import os
 from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
 
-valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
-similarity = 0.8
-
 
 class Config:
     def __init__(self):

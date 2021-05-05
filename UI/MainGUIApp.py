@@ -6,7 +6,6 @@ from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
 from config import Config
-from config import similarity as default_similarity
 from find_similar_images import find_similar_images
 
 from UI.CheckBar import Checkbar
