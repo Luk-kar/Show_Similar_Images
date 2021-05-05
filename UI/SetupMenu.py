@@ -10,13 +10,51 @@ from config import set_app_path
 from UI.helpers.open_folder import open_folder
 
 
+def get_defaults_ini():
+    return os.path.join(set_app_path(), "appData")
+
+
+def get_setup_path(ini_default_location):
+    return filedialog.asksaveasfilename(initialdir=ini_default_location, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+
+
+def setup_saving(
+        setup_path,
+        checkedboxes,
+        target_path,
+        similarity
+):
+
+    config = ConfigParser()
+
+    config["MATCHING"] = {
+        "images path": target_path,
+    }
+
+    config["FILE TYPES"] = {
+        ".png": checkedboxes[0],
+        ".jpg/.jpeg": checkedboxes[1],
+        ".bmp": checkedboxes[2]
+    }
+
+    config["MINIMAL SIMILARITY"] = {
+        "value": similarity,
+    }
+
+    if setup_path:
+        with open(setup_path, "w") as configfile:
+            config.write(configfile)
+    else:
+        raise OSError("There is no save path")
+
+
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
 class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 
         self.main = main
-        self.ini_default_location = os.path.join(set_app_path(), "appData")
+        self.ini_default_location = get_defaults_ini()
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)
@@ -39,18 +77,14 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = filedialog.asksaveasfilename(
-            initialdir=self.ini_default_location,
-            title="Save setup file",
-            filetypes=[("Setup files", "*.ini")]
-        )
+        setup_path = get_setup_path(self.ini_default_location)
 
         if setup_path:
             checkedboxes = list(main.checkbars.state())
             target_path = main.target_path_entry.get()
             similarity = float(main.similarity_entry.get())
 
-            self.setup_saving(
+            setup_saving(
                 setup_path,
                 checkedboxes,
                 target_path,
@@ -99,7 +133,7 @@ class SetupMenu(tk.Menu):
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
 
-        self.setup_saving(
+        setup_saving(
             setup_path,
             checkedboxes,
             target_path,
@@ -116,7 +150,7 @@ class SetupMenu(tk.Menu):
             target_path = ""
             similarity = 0.8
 
-            self.setup_saving(
+            setup_saving(
                 setup_file,
                 checkedboxes,
                 target_path,
@@ -135,7 +169,7 @@ class SetupMenu(tk.Menu):
         target_path = ""
         similarity = 0.8
 
-        self.setup_saving(
+        setup_saving(
             setup_file,
             checkedboxes,
             target_path,
@@ -172,33 +206,3 @@ class SetupMenu(tk.Menu):
             raise IOError(error)
 
         return config
-
-    def setup_saving(
-            self,
-            setup_path,
-            checkedboxes,
-            target_path,
-            similarity
-    ):
-
-        config = ConfigParser()
-
-        config["MATCHING"] = {
-            "images path": target_path,
-        }
-
-        config["FILE TYPES"] = {
-            ".png": checkedboxes[0],
-            ".jpg/.jpeg": checkedboxes[1],
-            ".bmp": checkedboxes[2]
-        }
-
-        config["MINIMAL SIMILARITY"] = {
-            "value": similarity,
-        }
-
-        if setup_path:
-            with open(setup_path, "w") as configfile:
-                config.write(configfile)
-        else:
-            raise OSError("There is no save path")
