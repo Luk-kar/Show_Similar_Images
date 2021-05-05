@@ -11,7 +11,8 @@ from find_similar_images import find_similar_images
 from UI.CheckBar import Checkbar
 from UI.EntryWithPlaceholder import EntryWithPlaceholder
 from UI.helpers.open_folder import open_folder
-from UI.SetupMenu import SetupMenu
+# from UI.SetupMenu import SetupMenu
+from UI.MenuBar import MenuBar
 
 
 class Main:
@@ -69,8 +70,7 @@ class Main:
 
         self.frame.grid(row=0, column=0)
 
-        menubar = SetupMenu(master, self)
-        master.config(menu=menubar)
+        menubar = MenuBar(self.master, self)
 
     def target_btn_folder_open(self):
 

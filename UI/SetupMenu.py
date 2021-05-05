@@ -17,8 +17,8 @@ class SetupMenu(tk.Menu):
         self.main = main
         self.setup = Config()
 
-        setupMenu = tk.Menu(self, tearoff=False)
-        self.add_cascade(label="Setup", underline=0, menu=setupMenu)
+        setupMenu = tk.Menu(parent, tearoff=False)
+        parent.add_cascade(label="Setup", underline=0, menu=setupMenu)
         setupMenu.add_command(
             label="Save as", command=self.setup_save_as)
         setupMenu.add_command(label="Open", command=self.setup_open)
