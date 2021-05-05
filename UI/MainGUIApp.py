@@ -18,11 +18,13 @@ from UI.SetupMenu import SetupMenu
 class Main:
     def __init__(self, master):
         self.master = master
+
+        config = Config()
+        config_DEFAULT = config.read_config_file_DEFAULT()
+
         master.title("Find similar images")
         master.iconbitmap(
-            f"{Config.set_app_path()}UI/assets/app.ico")
-
-        config = Config().read_config_file_DEFAULT()
+            f"{config.set_app_path()}UI/assets/app.ico")
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
@@ -35,10 +37,10 @@ class Main:
         self.target_path_entry
         self.target_path_entry.grid(row=1, column=0, ipadx=200, stick="we")
         self.set_entry_value(self.target_path_entry,
-                             config["MATCHING"]["images path"])
+                             config.get_images_folder_path(config_DEFAULT))
 
         self.img_open_folder = tk.PhotoImage(
-            file=f"{Config.set_app_path()}UI/assets/open_folder.gif")
+            file=f"{config.set_app_path()}UI/assets/open_folder.gif")
         self.button_choose_folder = tk.Button(
             self.frame, command=self.source_btn_folder_open)
         self.button_choose_folder.config(image=self.img_open_folder)
@@ -48,11 +50,7 @@ class Main:
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
         self.extensions_title.grid(row=2, column=0, pady=(15, 0), stick="w")
 
-        self.extensions = [  # todo
-            [".png", config["FILE TYPES"][".png"]],
-            [".jpg/.jpeg", config["FILE TYPES"][".jpg/.jpeg"]],
-            [".bmp", config["FILE TYPES"][".bmp"]]
-        ]
+        self.extensions = config.get_checked_extensions(config_DEFAULT)
         self.checkbars = Checkbar(self.frame, self.extensions)
         self.checkbars.grid(row=3, column=0, pady=(0, 15), stick="w")
 
@@ -63,7 +61,7 @@ class Main:
             self.frame, "Enter value from 0.0 to 1.0")
         self.similarity_entry.grid(row=5, column=0, ipadx=10, stick="w")
         self.set_entry_value(self.similarity_entry,
-                             config["MINIMAL SIMILARITY"]["value"])
+                             config.get_similarity(config_DEFAULT))
 
         self.button1 = tk.Button(
             self.master, text='Find similar images', width=25, bg="#f5f5f5", command=self.run_matching_images)

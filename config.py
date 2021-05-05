@@ -9,14 +9,19 @@ similarity = 0.8
 
 class Config:
     def __init__(self):
-        self.DEFAULT_ini_path = os.path.abspath(self.get_DEFAULT_ini_path())
+        self.DEFAULT_ini_path = os.path.abspath(self.get_DEFAULT_folder_path())
         self.DEFAULTS_file_path = os.path.abspath(os.path.join(
             self.DEFAULT_ini_path,
             "_DEFAULT.ini"
         ))
 
-    def get_DEFAULT_ini_path(self):
-        return os.path.join(self.set_app_path(), "appData")
+    def get_DEFAULT_folder_path(self):
+        appData_folder = os.path.join(self.set_app_path(), "appData")
+
+        if not os.path.isdir(appData_folder):
+            os.mkdir(appData_folder)
+
+        return appData_folder
 
     def get_save_file_ini_path(self):
         return filedialog.asksaveasfilename(initialdir=self.DEFAULT_ini_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
@@ -71,6 +76,9 @@ class Config:
     def read_config_file_DEFAULT(self):
 
         DEFAULTS = self.DEFAULTS_file_path
+        if not os.path.exists(DEFAULTS):
+            self.create_DEFAULT_setup_file()
+
         config = self.read_config_file(DEFAULTS)
         return config
 
