@@ -10,19 +10,19 @@ from config import set_app_path
 from UI.helpers.open_folder import open_folder
 
 
-def get_defaults_ini():
+def get_DEFAULT_ini_path():
     return os.path.join(set_app_path(), "appData")
 
 
-def get_save_file_path(ini_default_location):
-    return filedialog.asksaveasfilename(initialdir=ini_default_location, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+def get_save_file_ini_path():
+    return filedialog.asksaveasfilename(initialdir=get_DEFAULT_ini_path(), title="Save setup file", filetypes=[("Setup files", "*.ini")])
 
 
-def get_open_file_path(ini_default_location):
-    return filedialog.askopenfilename(initialdir=ini_default_location, title="Open setup file", filetypes=[("Setup files", "*.ini")])
+def get_open_file_ini_path():
+    return filedialog.askopenfilename(initialdir=get_DEFAULT_ini_path(), title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
 
-def setup_saving(
+def setup_saving_to_ini(
         setup_path,
         checkedboxes,
         target_path,
@@ -66,7 +66,7 @@ def read_config_file(file):
     return config
 
 
-DEFAULTS = "_DEFAULT.ini"
+DEFAULTS_file_path = "_DEFAULT.ini"
 
 
 def get_images_folder_path(config):
@@ -81,13 +81,27 @@ def get_checked_extensions(config):
     return config.items("FILE TYPES")
 
 
+def create_DEFAULT_setup_file(setup_path):
+    valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+    checkedboxes = list(map(lambda x: x[1], valid_extensions))
+    target_path = ""
+    similarity = 0.8
+
+    setup_saving_to_ini(
+        setup_path,
+        checkedboxes,
+        target_path,
+        similarity
+    )
+
+
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
 class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 
         self.main = main
-        self.ini_default_location = get_defaults_ini()
+        self.ini_default_location = get_DEFAULT_ini_path()
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)
@@ -110,14 +124,14 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = get_save_file_path(self.ini_default_location)
+        setup_path = get_save_file_ini_path()
 
         if setup_path:
             checkedboxes = list(main.checkbars.state())
             target_path = main.target_path_entry.get()
             similarity = float(main.similarity_entry.get())
 
-            setup_saving(
+            setup_saving_to_ini(
                 setup_path,
                 checkedboxes,
                 target_path,
@@ -141,8 +155,7 @@ class SetupMenu(tk.Menu):
 
     def setup_open(self):
 
-        setup_path = get_open_file_path(
-            self.ini_default_location)
+        setup_path = get_open_file_ini_path()
 
         if setup_path:
             config = read_config_file(setup_path)
@@ -158,12 +171,12 @@ class SetupMenu(tk.Menu):
         main = self.main
 
         setup_path = os.path.join(
-            self.ini_default_location, DEFAULTS)
+            self.ini_default_location, DEFAULTS_file_path)
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
 
-        setup_saving(
+        setup_saving_to_ini(
             setup_path,
             checkedboxes,
             target_path,
@@ -171,40 +184,21 @@ class SetupMenu(tk.Menu):
         )
 
     def setup_reset_to_defaults(self):
-        setup_path = os.path.join(self.ini_default_location, DEFAULTS)
+        setup_path = os.path.join(
+            self.ini_default_location, DEFAULTS_file_path)
 
         if not os.path.exists(setup_path):
 
-            valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
-            checkedboxes = list(map(lambda x: x[1], valid_extensions))
-            target_path = ""
-            similarity = 0.8
-
-            setup_saving(
-                setup_path,
-                checkedboxes,
-                target_path,
-                similarity
-            )
+            create_DEFAULT_setup_file(setup_path)
 
         config = read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def setup_default_reset(self):
-        setup_path = os.path.join(self.ini_default_location, DEFAULTS)
+        setup_path = os.path.join(
+            self.ini_default_location, DEFAULTS_file_path)
 
-        valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
-        # https://stackoverflow.com/a/6800507/12490791
-        checkedboxes = list(map(lambda x: x[1], valid_extensions))
-        target_path = ""
-        similarity = 0.8
-
-        setup_saving(
-            setup_path,
-            checkedboxes,
-            target_path,
-            similarity
-        )
+        create_DEFAULT_setup_file(setup_path)
 
         config = read_config_file(setup_path)
         self.dialogs_set_setup(config)
