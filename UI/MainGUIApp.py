@@ -11,8 +11,7 @@ from find_similar_images import find_similar_images
 from UI.CheckBar import Checkbar
 from UI.EntryWithPlaceholder import EntryWithPlaceholder
 from UI.helpers.open_folder import open_folder
-# from UI.SetupMenu import SetupMenu
-from UI.MenuBar import MenuBar
+from UI.MenuBar.MenuBar import MenuBar
 
 
 class Main:
