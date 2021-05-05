@@ -42,7 +42,7 @@ class Main:
         self.img_open_folder = tk.PhotoImage(
             file=f"{config.set_app_path()}UI/assets/open_folder.gif")
         self.button_choose_folder = tk.Button(
-            self.frame, command=self.source_btn_folder_open)
+            self.frame, command=self.target_btn_folder_open)
         self.button_choose_folder.config(image=self.img_open_folder)
         self.button_choose_folder.grid(
             column=1, row=1, padx=(5, 0), stick="w")
@@ -73,18 +73,43 @@ class Main:
         menubar = SetupMenu(master, self)
         master.config(menu=menubar)
 
-    def source_btn_folder_open(self):
+    def target_btn_folder_open(self):
 
-        self.btn_find_path(self.target_path_entry,
-                           lambda: filedialog.askdirectory(
-                               title="Source folder")
-                           )
+        chosen_directory = self.btn_find_path(self.target_path_entry,
+                                              lambda: filedialog.askdirectory(
+                                                  title="Source folder")
+                                              )
+
+        count = self.check_how_many_valid_files(chosen_directory)
+
+        if not self.get_extensions():
+            return messagebox.showwarning(
+                "Failed!", f"You did NOT choose any file extensions!")
+
+        if count:
+            messagebox.showwarning(
+                "Success!", f"There are {count} images to check in folder!")
+        else:
+            messagebox.showwarning(
+                "Failed!", f"There are NO, NADA, ZERO, ZINCH, 0\nimages to check in folder!")
+
+    def check_how_many_valid_files(self, chosen_directory):
+
+        count = 0
+
+        for name in os.listdir(chosen_directory):
+            if name.endswith(tuple(self.get_extensions())):
+                count += 1
+
+        return count
 
     def btn_find_path(self, entry, askpath):
 
         path = askpath()
         if path:
             self.set_entry_value(entry, path)
+
+        return path
 
     def set_entry_value(self, entry, value):
 
