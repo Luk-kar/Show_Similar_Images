@@ -11,7 +11,7 @@ from UI.helpers.open_folder import open_folder
 
 
 # https://stackoverflow.com/questions/31170616/how-to-access-a-method-in-one-inherited-tkinter-class-from-another-inherited-tki
-class SetupManu(tk.Menu):
+class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 
@@ -93,7 +93,8 @@ class SetupManu(tk.Menu):
 
         main = self.main
 
-        setup_path = os.path.join(self.ini_default_location, "_DEFAULT.ini")
+        setup_path = os.path.join(
+            self.ini_default_location, "_DEFAULT.ini")  # todo refactor config
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())

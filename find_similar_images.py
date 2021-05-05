@@ -124,8 +124,13 @@ def find_similar_images(target_path, valid_extensions, similarity):
                 raise ValueError(
                     f"Extension {ext} is invalid.\n Look at: {default_values.valid_extensions}.")
 
+    similarity_error_message = "Invalid value, it should be between 0.0 and 1.0."
+    try:
+        similarity = float(similarity)
+    except ValueError:
+        raise ValueError(similarity_error_message)
     if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
-        raise ValueError("Invalid value, it should be between 0.0 and 1.0.")
+        raise ValueError(similarity_error_message)
 
     if target_path:
 
@@ -141,6 +146,9 @@ def find_similar_images(target_path, valid_extensions, similarity):
         dir_output = get_dir_output(target_path)
 
         create_shortcuts_of_similar_images(similar_images, dir_output)
+
+        founded_images_folder = os.path.join(target_path, "_similar images")
+        return founded_images_folder
 
     else:
         print("wrong input")

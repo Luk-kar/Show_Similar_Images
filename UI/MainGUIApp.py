@@ -102,10 +102,11 @@ class Main:
         similarity = self.similarity_entry.get()
 
         try:
-            find_similar_images(target_path, valid_extensions, similarity)
+            founded_images_folder = find_similar_images(
+                target_path, valid_extensions, similarity)
             messagebox.showinfo(
                 "Success!", f"Now look for your target directory for results!\n{target_path}")
-            open_folder(target_path)
+            open_folder(founded_images_folder)
         except ValueError as e:
             messagebox.showerror("Error!", e)
 
