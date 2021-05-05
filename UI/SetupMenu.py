@@ -16,7 +16,6 @@ class SetupMenu(tk.Menu):
 
         self.main = main
         self.setup = Config()
-        self.ini_default_location = self.setup.get_DEFAULT_ini_path()
 
         setupMenu = tk.Menu(self, tearoff=False)
         self.add_cascade(label="Setup", underline=0, menu=setupMenu)

@@ -22,9 +22,7 @@ class Main:
         master.iconbitmap(
             f"{Config.set_app_path()}UI/assets/app.ico")
 
-        config = ConfigParser()
-        config.read(os.path.join(Config.set_app_path(),
-                                 "appData", "_DEFAULT.ini"))
+        config = Config().read_config_file_DEFAULT()
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 

@@ -68,6 +68,12 @@ class Config:
 
         return config
 
+    def read_config_file_DEFAULT(self):
+
+        DEFAULTS = self.DEFAULTS_file_path
+        config = self.read_config_file(DEFAULTS)
+        return config
+
     @staticmethod
     def get_images_folder_path(config):
         return config.get("MATCHING", "images path")
