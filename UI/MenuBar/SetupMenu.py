@@ -14,7 +14,7 @@ class SetupMenu(tk.Menu):
     def __init__(self, parent, main):
         tk.Menu.__init__(self, parent)
 
-        self.main = main
+        self.window = main
         self.dialogs = Dialogs()
 
         setupMenu = tk.Menu(parent, tearoff=False)
@@ -36,14 +36,14 @@ class SetupMenu(tk.Menu):
 
     def save_as_DIALOGS(self):
 
-        main = self.main
+        window = self.window
 
         DIALOGS_path = self.dialogs.get_dialogs_path_save()
 
         if DIALOGS_path:
-            checkedboxes = list(main.checkbars.state())
-            target_path = main.target_path_entry.get()
-            similarity = float(main.similarity_entry.get())
+            checkedboxes = list(window.checkbars.state())
+            target_path = window.target_path_entry.get()
+            similarity = float(window.similarity_entry.get())
 
             self.dialogs.saving_dialogs_to_file(
                 DIALOGS_path,
@@ -79,7 +79,7 @@ class SetupMenu(tk.Menu):
 
     def save_to_default_DIALOGS(self):
 
-        main = self.main
+        window = self.window
 
         AppFolder = self.dialogs.AppData_folder_path
         DEFAULTS_folder = self.dialogs.DEFAULTS_folder_path
@@ -91,12 +91,9 @@ class SetupMenu(tk.Menu):
         if not os.path.isdir(DEFAULTS_folder):
             os.mkdir(DEFAULTS_folder)
 
-        if not os.path.exists(DEFAULT_DIALOGS):
-            self.dialogs.create_DEFAULT_file()
-
-        checkedboxes = list(main.checkbars.state())
-        target_path = main.target_path_entry.get()
-        similarity = float(main.similarity_entry.get())
+        checkedboxes = list(window.checkbars.state())
+        target_path = window.target_path_entry.get()
+        similarity = float(window.similarity_entry.get())
 
         self.dialogs.saving_dialogs_to_file(
             DEFAULT_DIALOGS,
@@ -133,6 +130,7 @@ class SetupMenu(tk.Menu):
         if not os.path.isdir(DEFAULTS_folder):
             os.mkdir(DEFAULTS_folder)
 
+        # it will overwrite the file if it already exists
         self.dialogs.create_DEFAULT_file()
 
         config = self.dialogs.read_config_file(DEFAULT_DIALOGS)
@@ -140,15 +138,16 @@ class SetupMenu(tk.Menu):
 
     def set_setup_dialogs(self, config):
 
-        main = self.main
+        window = self.window
 
-        main.target_path_entry = main.entry_set(
-            main.target_path_entry, self.dialogs.get_images_folder_path(config)
+        window.target_path_entry = window.entry_set(
+            window.target_path_entry, self.dialogs.get_images_folder_path(
+                config)
         )
 
         picks = self.dialogs.get_checked_extensions(config)
-        main.checkbars.set_state(picks)
+        window.checkbars.set_state(picks)
 
-        main.similarity_entry = main.entry_set(
-            main.similarity_entry, self.dialogs.get_similarity(config)
+        window.similarity_entry = window.entry_set(
+            window.similarity_entry, self.dialogs.get_similarity(config)
         )
