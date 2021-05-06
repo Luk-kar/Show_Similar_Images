@@ -7,11 +7,11 @@ from configparser import ConfigParser
 class Config:
     def __init__(self):
         self.AppData_path = self.get_AppData_folder_path()
-        self.DEFAULTS_ini_path = self.get_DEFAULTS_folder_path(
+        self.DEFAULTS_path = self.get_DEFAULTS_folder_path(
             self.AppData_path)
 
-        self.DEFAULTS_file_path = os.path.join(
-            self.DEFAULTS_ini_path,
+        self.DEFAULTS_DIALOGS_path = os.path.join(
+            self.DEFAULTS_path,
             "_DIALOGS.ini"
         )
 
@@ -35,14 +35,14 @@ class Config:
 
         return DEFAULTS_ini_path
 
-    def get_save_file_ini_path(self):
+    def get_save_dialogs_to_file_path(self):
         return filedialog.asksaveasfilename(initialdir=self.AppData_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
 
-    def get_open_file_ini_path(self):
+    def get_open_dialogs_file_path(self):
         return filedialog.askopenfilename(initialdir=self.AppData_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
     @staticmethod
-    def setup_saving_to_ini(
+    def saving_dialogs_to_file(
             setup_path,
             checkedboxes,
             target_path,
@@ -85,9 +85,9 @@ class Config:
 
         return config
 
-    def read_config_file_DIALOGS(self):
+    def read_config_DEFAULT_DIALOGS(self):
 
-        DEFAULTS = self.DEFAULTS_file_path
+        DEFAULTS = self.DEFAULTS_DIALOGS_path
         if not os.path.exists(DEFAULTS):
             self.create_DIALOGS_setup_file()
 
@@ -108,14 +108,14 @@ class Config:
 
     def create_DIALOGS_setup_file(self):
 
-        setup_path = self.DEFAULTS_file_path
+        setup_path = self.DEFAULTS_DIALOGS_path
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
         target_path = ""
         similarity = 0.8
 
-        self.setup_saving_to_ini(
+        self.saving_dialogs_to_file(
             setup_path,
             checkedboxes,
             target_path,

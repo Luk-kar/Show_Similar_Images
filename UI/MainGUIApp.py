@@ -19,7 +19,7 @@ class Main:
         self.master = master
 
         config = Config()
-        config_DEFAULT = config.read_config_file_DIALOGS()
+        config_DEFAULT = config.read_config_DEFAULT_DIALOGS()
 
         master.title("Find similar images")
         master.iconbitmap(

@@ -20,33 +20,33 @@ class SetupMenu(tk.Menu):
         setupMenu = tk.Menu(parent, tearoff=False)
         parent.add_cascade(label="Setup", underline=0, menu=setupMenu)
         setupMenu.add_command(
-            label="Save as", command=self.setup_save_as)
-        setupMenu.add_command(label="Open", command=self.setup_open)
+            label="Save as", command=self.save_as_DIALOGS)
+        setupMenu.add_command(label="Open", command=self.open_DIALOGS)
         setupMenu.add_command(label="Save to defaults",
-                              command=self.setup_save_to_default_DIALOGS)
+                              command=self.save_to_default_DIALOGS)
         setupMenu.add_command(label="Reset to defaults",
-                              command=self.setup_reset_to_default_DIALOGS)
+                              command=self.reset_to_default_DIALOGS)
         setupMenu.add_command(label="Defaults reset",
-                              command=self.setup_reset_default_DIALOGS)
+                              command=self.reset_default_DIALOGS)
         setupMenu.add_separator()
         setupMenu.add_command(label="Exit", underline=1, command=self.quit)
 
     def quit(self):
         sys.exit(0)
 
-    def setup_save_as(self):
+    def save_as_DIALOGS(self):
 
         main = self.main
 
-        setup_path = self.setup.get_save_file_ini_path()
+        DIALOGS_path = self.setup.get_save_dialogs_to_file_path()
 
-        if setup_path:
+        if DIALOGS_path:
             checkedboxes = list(main.checkbars.state())
             target_path = main.target_path_entry.get()
             similarity = float(main.similarity_entry.get())
 
-            self.setup.setup_saving_to_ini(
-                setup_path,
+            self.setup.saving_dialogs_to_file(
+                DIALOGS_path,
                 checkedboxes,
                 target_path,
                 similarity
@@ -54,10 +54,10 @@ class SetupMenu(tk.Menu):
 
             messagebox.showinfo(
                 "Done!",
-                "You saved setup file in:"f"\n{setup_path}"
+                "You saved setup file in:"f"\n{DIALOGS_path}"
             )
 
-            setup_folder = os.path.dirname(setup_path)
+            setup_folder = os.path.dirname(DIALOGS_path)
 
         else:
 
@@ -66,9 +66,9 @@ class SetupMenu(tk.Menu):
                 "You haven't saved config!"
             )
 
-    def setup_open(self):
+    def open_DIALOGS(self):
 
-        setup_path = self.setup.get_open_file_ini_path()
+        setup_path = self.setup.get_open_dialogs_file_path()
 
         if setup_path:
             config = self.setup.read_config_file(setup_path)
@@ -79,25 +79,25 @@ class SetupMenu(tk.Menu):
                 "You haven't choose any file!"
             )
 
-    def setup_save_to_default_DIALOGS(self):
+    def save_to_default_DIALOGS(self):
 
         main = self.main
 
-        setup_path = self.setup.DEFAULTS_file_path
+        setup_path = self.setup.DEFAULTS_DIALOGS_path
 
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
 
-        self.setup.setup_saving_to_ini(
+        self.setup.saving_dialogs_to_file(
             setup_path,
             checkedboxes,
             target_path,
             similarity
         )
 
-    def setup_reset_to_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULTS_file_path
+    def reset_to_default_DIALOGS(self):
+        setup_path = self.setup.DEFAULTS_DIALOGS_path
 
         if not os.path.exists(setup_path):
 
@@ -106,8 +106,8 @@ class SetupMenu(tk.Menu):
         config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
-    def setup_reset_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULTS_file_path
+    def reset_default_DIALOGS(self):
+        setup_path = self.setup.DEFAULTS_DIALOGS_path
 
         self.setup.create_DIALOGS_setup_file()
 
