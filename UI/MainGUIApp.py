@@ -8,10 +8,10 @@ from tkinter import messagebox
 from config.Dialogs import Dialogs
 from find_similar_images import find_similar_images
 
-from UI.CheckBar import Checkbar
-from UI.EntryWithPlaceholder import EntryWithPlaceholder
-from UI.helpers.open_folder import open_folder
-from UI.MenuBar.MenuBar import MenuBar
+from .CheckBar import Checkbar
+from .EntryWithPlaceholder import EntryWithPlaceholder
+from .helpers.open_folder import open_folder
+from .MenuBar.MenuBar import MenuBar
 
 
 class Main:
