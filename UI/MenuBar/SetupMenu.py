@@ -83,7 +83,7 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = self.setup.DEFAULTS_DIALOGS_path
+        setup_path = self.setup.DEFAULT_DIALOGS_path
 
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
@@ -97,19 +97,19 @@ class SetupMenu(tk.Menu):
         )
 
     def reset_to_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULTS_DIALOGS_path
+        setup_path = self.setup.DEFAULT_DIALOGS_path
 
         if not os.path.exists(setup_path):
 
-            self.setup.create_DIALOGS_setup_file()
+            self.setup.create_DEFAULT_DIALOGS_file()
 
         config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
     def reset_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULTS_DIALOGS_path
+        setup_path = self.setup.DEFAULT_DIALOGS_path
 
-        self.setup.create_DIALOGS_setup_file()
+        self.setup.create_DEFAULT_DIALOGS_file()
 
         config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)

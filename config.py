@@ -10,7 +10,7 @@ class Config:
         self.DEFAULTS_path = self.get_DEFAULTS_folder_path(
             self.AppData_path)
 
-        self.DEFAULTS_DIALOGS_path = os.path.join(
+        self.DEFAULT_DIALOGS_path = os.path.join(
             self.DEFAULTS_path,
             "_DIALOGS.ini"
         )
@@ -26,14 +26,14 @@ class Config:
 
     def get_DEFAULTS_folder_path(self, AppData_path):
 
-        DEFAULTS_ini_path = os.path.join(
+        DEFAULTS_folder_path = os.path.join(
             AppData_path,
             "_DEFAULTS"
         )
-        if not os.path.isdir(DEFAULTS_ini_path):
-            os.mkdir(DEFAULTS_ini_path)
+        if not os.path.isdir(DEFAULTS_folder_path):
+            os.mkdir(DEFAULTS_folder_path)
 
-        return DEFAULTS_ini_path
+        return DEFAULTS_folder_path
 
     def get_save_dialogs_to_file_path(self):
         return filedialog.asksaveasfilename(initialdir=self.AppData_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
@@ -87,11 +87,11 @@ class Config:
 
     def read_config_DEFAULT_DIALOGS(self):
 
-        DEFAULTS = self.DEFAULTS_DIALOGS_path
-        if not os.path.exists(DEFAULTS):
-            self.create_DIALOGS_setup_file()
+        DIALOGS = self.DEFAULT_DIALOGS_path
+        if not os.path.exists(DIALOGS):
+            self.create_DEFAULT_DIALOGS_file()
 
-        config = self.read_config_file(DEFAULTS)
+        config = self.read_config_file(DIALOGS)
         return config
 
     @staticmethod
@@ -106,9 +106,9 @@ class Config:
     def get_checked_extensions(config):
         return config.items("FILE TYPES")
 
-    def create_DIALOGS_setup_file(self):
+    def create_DEFAULT_DIALOGS_file(self):
 
-        setup_path = self.DEFAULTS_DIALOGS_path
+        setup_path = self.DEFAULT_DIALOGS_path
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
