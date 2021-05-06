@@ -6,25 +6,40 @@ from configparser import ConfigParser
 
 class Config:
     def __init__(self):
-        self.DEFAULT_ini_path = os.path.abspath(self.get_DEFAULT_folder_path())
-        self.DEFAULTS_file_path = os.path.abspath(os.path.join(
-            self.DEFAULT_ini_path,
-            "_DEFAULT.ini"
-        ))
+        self.AppData_path = self.get_AppData_folder_path()
+        self.DEFAULTS_ini_path = self.get_DEFAULTS_folder_path(
+            self.AppData_path)
 
-    def get_DEFAULT_folder_path(self):
+        self.DEFAULTS_file_path = os.path.join(
+            self.DEFAULTS_ini_path,
+            "_DIALOGS.ini"
+        )
+
+    def get_AppData_folder_path(self):
+
         appData_folder = os.path.join(self.set_app_path(), "appData")
-
         if not os.path.isdir(appData_folder):
             os.mkdir(appData_folder)
 
+        appData_folder = os.path.abspath(appData_folder)
         return appData_folder
 
+    def get_DEFAULTS_folder_path(self, AppData_path):
+
+        DEFAULTS_ini_path = os.path.join(
+            AppData_path,
+            "_DEFAULTS"
+        )
+        if not os.path.isdir(DEFAULTS_ini_path):
+            os.mkdir(DEFAULTS_ini_path)
+
+        return DEFAULTS_ini_path
+
     def get_save_file_ini_path(self):
-        return filedialog.asksaveasfilename(initialdir=self.DEFAULT_ini_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.asksaveasfilename(initialdir=self.AppData_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
 
     def get_open_file_ini_path(self):
-        return filedialog.askopenfilename(initialdir=self.DEFAULT_ini_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.askopenfilename(initialdir=self.AppData_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
     @staticmethod
     def setup_saving_to_ini(
@@ -70,11 +85,11 @@ class Config:
 
         return config
 
-    def read_config_file_DEFAULT(self):
+    def read_config_file_DIALOGS(self):
 
         DEFAULTS = self.DEFAULTS_file_path
         if not os.path.exists(DEFAULTS):
-            self.create_DEFAULT_setup_file()
+            self.create_DIALOGS_setup_file()
 
         config = self.read_config_file(DEFAULTS)
         return config
@@ -91,7 +106,7 @@ class Config:
     def get_checked_extensions(config):
         return config.items("FILE TYPES")
 
-    def create_DEFAULT_setup_file(self):
+    def create_DIALOGS_setup_file(self):
 
         setup_path = self.DEFAULTS_file_path
 

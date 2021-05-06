@@ -16,10 +16,10 @@ def parse_extensions(_argv):
 def run_console(_argv):
 
     config = Config()
-    config_DEFAULT = config.read_config_file_DEFAULT()
+    config_DIALOGS = config.read_config_file_DIALOGS()
 
     if len(_argv) <= 2:
-        valid_extensions = config.get_checked_extensions(config_DEFAULT)
+        valid_extensions = config.get_checked_extensions(config_DIALOGS)
         arg_extensions = []
         for ext in valid_extensions:
             if ext[1]:
@@ -31,7 +31,7 @@ def run_console(_argv):
         _argv[2] = parse_extensions(_argv[2])
 
     if len(_argv) <= 3:
-        similarity = config.get_similarity(config_DEFAULT)
+        similarity = config.get_similarity(config_DIALOGS)
         _argv.append(similarity)
     else:
         _argv[3] = float(_argv[3])

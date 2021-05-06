@@ -23,11 +23,11 @@ class SetupMenu(tk.Menu):
             label="Save as", command=self.setup_save_as)
         setupMenu.add_command(label="Open", command=self.setup_open)
         setupMenu.add_command(label="Save to defaults",
-                              command=self.setup_save_to_defaults)
+                              command=self.setup_save_to_default_DIALOGS)
         setupMenu.add_command(label="Reset to defaults",
-                              command=self.setup_reset_to_defaults)
+                              command=self.setup_reset_to_default_DIALOGS)
         setupMenu.add_command(label="Defaults reset",
-                              command=self.setup_default_reset)
+                              command=self.setup_reset_default_DIALOGS)
         setupMenu.add_separator()
         setupMenu.add_command(label="Exit", underline=1, command=self.quit)
 
@@ -79,7 +79,7 @@ class SetupMenu(tk.Menu):
                 "You haven't choose any file!"
             )
 
-    def setup_save_to_defaults(self):
+    def setup_save_to_default_DIALOGS(self):
 
         main = self.main
 
@@ -96,20 +96,20 @@ class SetupMenu(tk.Menu):
             similarity
         )
 
-    def setup_reset_to_defaults(self):
+    def setup_reset_to_default_DIALOGS(self):
         setup_path = self.setup.DEFAULTS_file_path
 
         if not os.path.exists(setup_path):
 
-            self.setup.create_DEFAULT_setup_file()
+            self.setup.create_DIALOGS_setup_file()
 
         config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)
 
-    def setup_default_reset(self):
+    def setup_reset_default_DIALOGS(self):
         setup_path = self.setup.DEFAULTS_file_path
 
-        self.setup.create_DEFAULT_setup_file()
+        self.setup.create_DIALOGS_setup_file()
 
         config = self.setup.read_config_file(setup_path)
         self.dialogs_set_setup(config)

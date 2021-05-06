@@ -164,7 +164,7 @@ def find_similar_images(target_path, extensions_chosen, similarity):
 def get_possible_extensions():
 
     config = Config()
-    config_DEFAULT = config.read_config_file_DEFAULT()
+    config_DEFAULT = config.read_config_file_DIALOGS()
 
     extensions_default = []
     extensions = config.get_checked_extensions(config_DEFAULT)

@@ -14,3 +14,11 @@ class LogMenu(tk.Menu):
 
     def change_log_status(self):
         pass
+
+        # feedback = ""
+        # if "Succes!" in feedback:
+        #         messagebox.showinfo("Succes!", feedback)
+        #     elif "Error!" in feedback:
+        #         messagebox.showerror("Error!", feedback)
+        #     else:
+        #         raise ValueError(f"Not valid feedback\n{feedback}")
