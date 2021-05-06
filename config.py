@@ -6,12 +6,12 @@ from configparser import ConfigParser
 
 class Config:
     def __init__(self):
-        self.AppData_path = self.get_AppData_folder_path()
-        self.DEFAULTS_path = self.get_DEFAULTS_folder_path(
-            self.AppData_path)
+        self.AppData_folder_path = self.get_AppData_folder_path()
+        self.DEFAULTS_folder_path = self.get_DEFAULTS_folder_path(
+            self.AppData_folder_path)
 
-        self.DEFAULT_DIALOGS_path = os.path.join(
-            self.DEFAULTS_path,
+        self.DEFAULT_DIALOGS_folder_path = os.path.join(
+            self.DEFAULTS_folder_path,
             "_DIALOGS.ini"
         )
 
@@ -36,10 +36,10 @@ class Config:
         return DEFAULTS_folder_path
 
     def get_save_dialogs_to_file_path(self):
-        return filedialog.asksaveasfilename(initialdir=self.AppData_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.asksaveasfilename(initialdir=self.AppData_folder_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
 
     def get_open_dialogs_file_path(self):
-        return filedialog.askopenfilename(initialdir=self.AppData_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.askopenfilename(initialdir=self.AppData_folder_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
 
     @staticmethod
     def saving_dialogs_to_file(
@@ -87,7 +87,7 @@ class Config:
 
     def read_config_DEFAULT_DIALOGS(self):
 
-        DIALOGS = self.DEFAULT_DIALOGS_path
+        DIALOGS = self.DEFAULT_DIALOGS_folder_path
         if not os.path.exists(DIALOGS):
             self.create_DEFAULT_DIALOGS_file()
 
@@ -108,7 +108,7 @@ class Config:
 
     def create_DEFAULT_DIALOGS_file(self):
 
-        setup_path = self.DEFAULT_DIALOGS_path
+        setup_path = self.DEFAULT_DIALOGS_folder_path
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
