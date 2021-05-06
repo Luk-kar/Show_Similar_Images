@@ -17,11 +17,21 @@ class Logger:
             "LOGGER.ini"
         )
 
+        self.sections = {
+            "LOGGER": {
+                "key": "save founded matches to log",
+                "value": 1
+            }
+        }
+
     def create_DEFAULT_file(self):
 
         logger_path = self.file_path
 
-        option = ["save founded matches to log", 1]
+        key = self.sections["LOGGER"]["key"]
+        value = self.sections["LOGGER"]["value"]
+
+        option = [key, value]
 
         self.saving_logger_to_file(
             logger_path,
@@ -32,7 +42,8 @@ class Logger:
 
         logger_path = self.file_path
 
-        option = ["save founded matches to log", value]
+        key = self.sections["LOGGER"]["key"]
+        option = [key, value]
 
         self.saving_logger_to_file(
             logger_path,

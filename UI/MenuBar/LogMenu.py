@@ -1,5 +1,6 @@
 import tkinter as tk
 import os
+from tkinter import messagebox
 
 from config.Logger import Logger
 
@@ -25,6 +26,11 @@ class LogMenu(tk.Menu):
         label = self.label_template(str(bool(negation)))
 
         self.logMenu.entryconfigure(1, label=label)
+
+        messagebox.showinfo(
+            "Success",
+            f"You changed writing to log to: {bool(negation)}"
+        )
 
     def get_label(self):
         boolean = bool(self.logger.read_writing_status())
