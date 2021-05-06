@@ -12,7 +12,7 @@ class Dialogs:
 
         self.DEFAULT_file_path = os.path.join(
             self.DEFAULTS_folder_path,
-            "_DIALOGS.ini"
+            "DIALOGS.ini"
         )
 
     def get_AppData_folder_path(self):
@@ -43,7 +43,7 @@ class Dialogs:
 
     @staticmethod
     def saving_dialogs_to_file(
-            setup_path,
+            DIALOGS_path,
             checkedboxes,
             target_path,
             similarity
@@ -65,8 +65,8 @@ class Dialogs:
             "value": similarity,
         }
 
-        if setup_path:
-            with open(setup_path, "w") as configfile:
+        if DIALOGS_path:
+            with open(DIALOGS_path, "w") as configfile:
                 config.write(configfile)
         else:
             raise OSError("There is no save path")
@@ -108,7 +108,7 @@ class Dialogs:
 
     def create_DEFAULT_file(self):
 
-        setup_path = self.DEFAULT_file_path
+        DIALOGS_path = self.DEFAULT_file_path
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
@@ -116,7 +116,7 @@ class Dialogs:
         similarity = 0.8
 
         self.saving_dialogs_to_file(
-            setup_path,
+            DIALOGS_path,
             checkedboxes,
             target_path,
             similarity
