@@ -1,6 +1,6 @@
 import sys
 
-from config import Dialogs as DefaultArgs
+from config.Dialogs import Dialogs as DefaultArgs
 from find_similar_images import find_similar_images
 from UI.MainGUIApp import MainGUIApp
 

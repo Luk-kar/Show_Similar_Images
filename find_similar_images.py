@@ -3,7 +3,7 @@ import win32com.client
 
 from compare_two_images import compare_images
 import config as default_values
-from config import Dialogs
+from config.Dialogs import Dialogs
 
 SIMILAR_IMAGES_FOLDER = "_similar images"
 

@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
-from config import Dialogs
+from config.Dialogs import Dialogs
 from find_similar_images import find_similar_images
 
 from UI.CheckBar import Checkbar

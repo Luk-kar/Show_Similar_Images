@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
-from config import Dialogs
+from config.Dialogs import Dialogs
 from UI.helpers.open_folder import open_folder
 
 
