@@ -15,7 +15,7 @@ class SetupMenu(tk.Menu):
         tk.Menu.__init__(self, parent)
 
         self.main = main
-        self.setup = Config()
+        self.config = Config()
 
         setupMenu = tk.Menu(parent, tearoff=False)
         parent.add_cascade(label="Setup", underline=0, menu=setupMenu)
@@ -38,14 +38,14 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        DIALOGS_path = self.setup.get_save_dialogs_to_file_path()
+        DIALOGS_path = self.config.get_dialogs_path_save()
 
         if DIALOGS_path:
             checkedboxes = list(main.checkbars.state())
             target_path = main.target_path_entry.get()
             similarity = float(main.similarity_entry.get())
 
-            self.setup.saving_dialogs_to_file(
+            self.config.saving_dialogs_to_file(
                 DIALOGS_path,
                 checkedboxes,
                 target_path,
@@ -57,8 +57,6 @@ class SetupMenu(tk.Menu):
                 "You saved setup file in:"f"\n{DIALOGS_path}"
             )
 
-            setup_folder = os.path.dirname(DIALOGS_path)
-
         else:
 
             messagebox.showinfo(
@@ -68,11 +66,11 @@ class SetupMenu(tk.Menu):
 
     def open_DIALOGS(self):
 
-        setup_path = self.setup.get_open_dialogs_file_path()
+        setup_path = self.config.get_dialogs_path_open()
 
         if setup_path:
-            config = self.setup.read_config_file(setup_path)
-            self.dialogs_set_setup(config)
+            config = self.config.read_config_file(setup_path)
+            self.set_setup_dialogs(config)
         else:
             messagebox.showinfo(
                 "Ouch!",
@@ -83,48 +81,74 @@ class SetupMenu(tk.Menu):
 
         main = self.main
 
-        setup_path = self.setup.DEFAULT_DIALOGS_folder_path
+        AppFolder = self.config.AppData_folder_path
+        DEFAULTS_folder = self.config.DEFAULTS_folder_path
+        DEFAULT_DIALOGS = self.config.DEFAULT_DIALOGS_file_path
+
+        if not os.path.isdir(AppFolder):
+            os.mkdir(AppFolder)
+
+        if not os.path.isdir(DEFAULTS_folder):
+            os.mkdir(DEFAULTS_folder)
+
+        if not os.path.exists(DEFAULT_DIALOGS):
+            self.config.create_DEFAULT_DIALOGS_file()
 
         checkedboxes = list(main.checkbars.state())
         target_path = main.target_path_entry.get()
         similarity = float(main.similarity_entry.get())
 
-        self.setup.saving_dialogs_to_file(
-            setup_path,
+        self.config.saving_dialogs_to_file(
+            DEFAULT_DIALOGS,
             checkedboxes,
             target_path,
             similarity
         )
 
     def reset_to_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULT_DIALOGS_folder_path
+        AppFolder = self.config.AppData_folder_path
+        DEFAULTS_folder = self.config.DEFAULTS_folder_path
+        DEFAULT_DIALOGS = self.config.DEFAULT_DIALOGS_file_path
 
-        if not os.path.exists(setup_path):
+        if not os.path.isdir(AppFolder):
+            os.mkdir(AppFolder)
 
-            self.setup.create_DEFAULT_DIALOGS_file()
+        if not os.path.isdir(DEFAULTS_folder):
+            os.mkdir(DEFAULTS_folder)
 
-        config = self.setup.read_config_file(setup_path)
-        self.dialogs_set_setup(config)
+        if not os.path.exists(DEFAULT_DIALOGS):
+            self.config.create_DEFAULT_DIALOGS_file()
+
+        config = self.config.read_config_file(DEFAULT_DIALOGS)
+        self.set_setup_dialogs(config)
 
     def reset_default_DIALOGS(self):
-        setup_path = self.setup.DEFAULT_DIALOGS_folder_path
+        AppFolder = self.config.AppData_folder_path
+        DEFAULTS_folder = self.config.DEFAULTS_folder_path
+        DEFAULT_DIALOGS = self.config.DEFAULT_DIALOGS_file_path
 
-        self.setup.create_DEFAULT_DIALOGS_file()
+        if not os.path.isdir(AppFolder):
+            os.mkdir(AppFolder)
 
-        config = self.setup.read_config_file(setup_path)
-        self.dialogs_set_setup(config)
+        if not os.path.isdir(DEFAULTS_folder):
+            os.mkdir(DEFAULTS_folder)
 
-    def dialogs_set_setup(self, config):
+        self.config.create_DEFAULT_DIALOGS_file()
+
+        config = self.config.read_config_file(DEFAULT_DIALOGS)
+        self.set_setup_dialogs(config)
+
+    def set_setup_dialogs(self, config):
 
         main = self.main
 
         main.target_path_entry = main.entry_set(
-            main.target_path_entry, self.setup.get_images_folder_path(config)
+            main.target_path_entry, self.config.get_images_folder_path(config)
         )
 
-        picks = self.setup.get_checked_extensions(config)
+        picks = self.config.get_checked_extensions(config)
         main.checkbars.set_state(picks)
 
         main.similarity_entry = main.entry_set(
-            main.similarity_entry, self.setup.get_similarity(config)
+            main.similarity_entry, self.config.get_similarity(config)
         )
