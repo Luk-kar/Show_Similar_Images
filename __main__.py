@@ -16,7 +16,7 @@ def parse_extensions(_argv):
 def run_console(_argv):
 
     config = DefaultArgs()
-    config_default = config.read_DEFAULT()
+    config_default = config.get_DEFAULT()
 
     if len(_argv) <= 2:
         valid_extensions = config.get_checked_extensions(config_default)

@@ -6,6 +6,7 @@ from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
 from config.Dialogs import Dialogs
+from config.paths import set_app_path
 from find_similar_images import find_similar_images
 
 from .CheckBar import Checkbar
@@ -19,11 +20,11 @@ class Main:
         self.master = master
 
         config = Dialogs()
-        config_DEFAULT = config.read_DEFAULT()
+        config_DEFAULT = config.get_DEFAULT()
 
         master.title("Find similar images")
         master.iconbitmap(
-            f"{config.set_app_path()}UI/assets/app.ico")
+            f"{set_app_path()}UI/assets/app.ico")
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
@@ -39,7 +40,7 @@ class Main:
                              config.get_images_folder_path(config_DEFAULT))
 
         self.img_open_folder = tk.PhotoImage(
-            file=f"{config.set_app_path()}UI/assets/open_folder.gif")
+            file=f"{set_app_path()}UI/assets/open_folder.gif")
         self.button_choose_folder = tk.Button(
             self.frame, command=self.target_btn_folder_open)
         self.button_choose_folder.config(image=self.img_open_folder)

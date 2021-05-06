@@ -3,37 +3,19 @@ import os
 from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
 
+from .paths import get_AppData_folder_path, get_DEFAULTS_folder_path
 
-class Dialogs:
+
+class Dialogs:  # todo values
     def __init__(self):
-        self.AppData_folder_path = self.get_AppData_folder_path()
-        self.DEFAULTS_folder_path = self.get_DEFAULTS_folder_path(
+        self.AppData_folder_path = get_AppData_folder_path()
+        self.DEFAULTS_folder_path = get_DEFAULTS_folder_path(
             self.AppData_folder_path)
 
         self.DEFAULT_file_path = os.path.join(
             self.DEFAULTS_folder_path,
             "DIALOGS.ini"
         )
-
-    def get_AppData_folder_path(self):
-
-        appData_folder = os.path.join(self.set_app_path(), "appData")
-        if not os.path.isdir(appData_folder):
-            os.mkdir(appData_folder)
-
-        appData_folder = os.path.abspath(appData_folder)
-        return appData_folder
-
-    def get_DEFAULTS_folder_path(self, AppData_path):
-
-        DEFAULTS_folder_path = os.path.join(
-            AppData_path,
-            "_DEFAULTS"
-        )
-        if not os.path.isdir(DEFAULTS_folder_path):
-            os.mkdir(DEFAULTS_folder_path)
-
-        return DEFAULTS_folder_path
 
     def get_dialogs_path_save(self):
         return filedialog.asksaveasfilename(initialdir=self.AppData_folder_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
@@ -85,7 +67,7 @@ class Dialogs:
 
         return config
 
-    def read_DEFAULT(self):
+    def get_DEFAULT(self):
 
         DEFAULT = self.DEFAULT_file_path
         if not os.path.exists(DEFAULT):
@@ -121,18 +103,3 @@ class Dialogs:
             target_path,
             similarity
         )
-
-    @staticmethod
-    def set_app_path():
-
-        # https://stackoverflow.com/a/404750/12490791
-        program_name = sys.argv[0]
-
-        if getattr(sys, 'frozen', False) or program_name.endswith("__main__.py"):
-            application_path = ""  # relative ./
-        elif __file__:
-            application_path = f"{program_name}/"
-        else:
-            raise IOError("no path")
-
-        return application_path
