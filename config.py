@@ -4,13 +4,13 @@ from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
 
 
-class Config:
+class Dialogs:
     def __init__(self):
         self.AppData_folder_path = self.get_AppData_folder_path()
         self.DEFAULTS_folder_path = self.get_DEFAULTS_folder_path(
             self.AppData_folder_path)
 
-        self.DEFAULT_DIALOGS_file_path = os.path.join(
+        self.DEFAULT_file_path = os.path.join(
             self.DEFAULTS_folder_path,
             "_DIALOGS.ini"
         )
@@ -85,13 +85,13 @@ class Config:
 
         return config
 
-    def read_config_DEFAULT_DIALOGS(self):
+    def read_DEFAULT(self):
 
-        DIALOGS = self.DEFAULT_DIALOGS_file_path
-        if not os.path.exists(DIALOGS):
-            self.create_DEFAULT_DIALOGS_file()
+        DEFAULT = self.DEFAULT_file_path
+        if not os.path.exists(DEFAULT):
+            self.create_DEFAULT_file()
 
-        config = self.read_config_file(DIALOGS)
+        config = self.read_config_file(DEFAULT)
         return config
 
     @staticmethod
@@ -106,9 +106,9 @@ class Config:
     def get_checked_extensions(config):
         return config.items("FILE TYPES")
 
-    def create_DEFAULT_DIALOGS_file(self):
+    def create_DEFAULT_file(self):
 
-        setup_path = self.DEFAULT_DIALOGS_file_path
+        setup_path = self.DEFAULT_file_path
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))

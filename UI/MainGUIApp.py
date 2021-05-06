@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
-from config import Config
+from config import Dialogs
 from find_similar_images import find_similar_images
 
 from UI.CheckBar import Checkbar
@@ -18,8 +18,8 @@ class Main:
     def __init__(self, master):
         self.master = master
 
-        config = Config()
-        config_DEFAULT = config.read_config_DEFAULT_DIALOGS()
+        config = Dialogs()
+        config_DEFAULT = config.read_DEFAULT()
 
         master.title("Find similar images")
         master.iconbitmap(

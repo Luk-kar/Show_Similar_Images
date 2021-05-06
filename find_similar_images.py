@@ -3,7 +3,7 @@ import win32com.client
 
 from compare_two_images import compare_images
 import config as default_values
-from config import Config
+from config import Dialogs
 
 SIMILAR_IMAGES_FOLDER = "_similar images"
 
@@ -163,8 +163,8 @@ def find_similar_images(target_path, extensions_chosen, similarity):
 
 def get_possible_extensions():
 
-    config = Config()
-    config_DEFAULT = config.read_config_DEFAULT_DIALOGS()
+    config = Dialogs()
+    config_DEFAULT = config.read_DEFAULT()
 
     extensions_default = []
     extensions = config.get_checked_extensions(config_DEFAULT)

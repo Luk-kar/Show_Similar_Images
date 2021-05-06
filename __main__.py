@@ -1,6 +1,6 @@
 import sys
 
-from config import Config
+from config import Dialogs as DefaultArgs
 from find_similar_images import find_similar_images
 from UI.MainGUIApp import MainGUIApp
 
@@ -15,11 +15,11 @@ def parse_extensions(_argv):
 
 def run_console(_argv):
 
-    config = Config()
-    config_DIALOGS = config.read_config_DEFAULT_DIALOGS()
+    config = DefaultArgs()
+    config_default = config.read_DEFAULT()
 
     if len(_argv) <= 2:
-        valid_extensions = config.get_checked_extensions(config_DIALOGS)
+        valid_extensions = config.get_checked_extensions(config_default)
         arg_extensions = []
         for ext in valid_extensions:
             if ext[1]:
@@ -31,7 +31,7 @@ def run_console(_argv):
         _argv[2] = parse_extensions(_argv[2])
 
     if len(_argv) <= 3:
-        similarity = config.get_similarity(config_DIALOGS)
+        similarity = config.get_similarity(config_default)
         _argv.append(similarity)
     else:
         _argv[3] = float(_argv[3])
