@@ -63,6 +63,13 @@ class About():
             "https://github.com/Luk-kar/Show_Images_Differences/blob/master/docs/CONTRIBUTING.md"))
         contribute_link.pack(anchor=justify)
 
+        # Author
+        author = "Karol Łukaszczyk"
+        author_label = tk.Label(padding, text="Author:", font=label_font)
+        author_label.pack(pady=y_space, anchor=justify)
+        author_link = tk.Label(padding, text=author)
+        author_link.pack(anchor=justify)
+
         # Contact
         contact = "lukkarcontact@gmail.com"
         contact_label = tk.Label(padding, text="Contact:", font=label_font)

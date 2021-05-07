@@ -36,5 +36,6 @@ class LogMenu(tk.Menu):
         boolean = bool(self.logger.read_writing_status())
         return self.label_template(boolean)
 
-    def label_template(self, boolean):
+    @staticmethod
+    def label_template(boolean):
         return f"Save logs: {boolean}"
