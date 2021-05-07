@@ -7,6 +7,7 @@ from tkinter import messagebox
 
 from config.Dialogs import Dialogs
 from config.paths import set_app_path
+from config.Logger import Logger
 from find_similar_images import find_similar_images
 
 from .CheckBar import Checkbar
@@ -63,10 +64,11 @@ class Main:
         self.set_entry_value(self.similarity_entry,
                              config.get_similarity(config_DEFAULT))
 
-        self.button1 = tk.Button(
+        self.button_run_program = tk.Button(
             self.master, text='Find similar images', width=25, bg="#f5f5f5", command=self.run_matching_images)
-        self.button1.grid(row=1, column=0, pady=(0, 15), padx=10, stick="we")
-        self.button1.config(height=2)
+        self.button_run_program.grid(
+            row=1, column=0, pady=(0, 15), padx=10, stick="we")
+        self.button_run_program.config(height=2)
 
         self.frame.grid(row=0, column=0)
 
@@ -122,14 +124,28 @@ class Main:
         target_path = self.target_path_entry.get()
         similarity = self.similarity_entry.get()
 
+        isLog = self.isLogging()
+
         try:
             founded_images_folder = find_similar_images(
-                target_path, valid_extensions, similarity)
+                target_path,
+                valid_extensions,
+                similarity,
+                isLog
+            )
             messagebox.showinfo(
                 "Success!", f"Now look for your target directory for results!\n{target_path}")
             open_folder(founded_images_folder)
         except ValueError as e:
             messagebox.showerror("Error!", e)
+
+    def isLogging(self):
+
+        logger = Logger()
+        if not os.path.exists(logger.file_path):
+            logger.create_DEFAULT_file()
+        isLog = bool(logger.read_writing_status())
+        return isLog
 
     def get_extensions(self):
 

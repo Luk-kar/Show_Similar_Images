@@ -2,6 +2,7 @@ import sys
 import os
 from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
+from datetime import datetime
 
 from .paths import get_AppData_folder_path, get_DEFAULTS_folder_path
 
@@ -100,3 +101,29 @@ class Logger:
         value = int(config.get("LOGGER", "save founded matches to log"))
 
         return value
+
+    @staticmethod
+    def create_log_of_similar_images(similar_images, similarity, dir_output):
+
+        def get_current_date():
+            """get the current date"""
+
+            datetime_object = datetime.now()
+            return datetime_object.strftime("%Y_%m_%d-%H_%M")
+
+        to_write_down = f"[{os.path.dirname(dir_output)}]\nsimilarity: {similarity}\n"
+
+        for image_list in similar_images:
+
+            if len(similar_images[image_list]) > 1:
+
+                to_write_down += "\n"
+
+                for img in similar_images[image_list]:
+                    to_write_down += f"{os.path.basename(img)}\n"
+
+        current_date = get_current_date()
+        file_path = os.path.join(dir_output, f"{current_date}-list.log")
+        file_log = open(file_path, "w")
+        file_log.writelines(to_write_down)
+        file_log.close()

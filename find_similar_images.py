@@ -4,6 +4,7 @@ import win32com.client
 from compare_two_images import compare_images
 import config as default_values
 from config.Dialogs import Dialogs
+from config.Logger import Logger
 
 SIMILAR_IMAGES_FOLDER = "_similar images"
 
@@ -111,7 +112,7 @@ def create_shortcut(path, image):
     shortcut.save()
 
 
-def find_similar_images(target_path, extensions_chosen, similarity):
+def find_similar_images(target_path, extensions_chosen, similarity, isLog):
 
     extensions_possible = get_possible_extensions()
 
@@ -138,27 +139,26 @@ def find_similar_images(target_path, extensions_chosen, similarity):
     if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
         raise ValueError(similarity_error_message)
 
-    if target_path:
+    extensions_chosen = tuple(extensions_chosen)
 
-        extensions_chosen = tuple(extensions_chosen)
+    paths_files_source = get_images_paths(target_path, extensions_chosen)
 
-        paths_files_source = get_images_paths(target_path, extensions_chosen)
+    paths_files_target = paths_files_source.copy()
 
-        paths_files_target = paths_files_source.copy()
+    similar_images = get_similar_images(
+        paths_files_source, paths_files_target, similarity)
 
-        similar_images = get_similar_images(
-            paths_files_source, paths_files_target, similarity)
+    dir_output = get_dir_output(target_path)
 
-        dir_output = get_dir_output(target_path)
+    if isLog:
+        Logger.create_log_of_similar_images(
+            similar_images, similarity, dir_output)
 
-        create_shortcuts_of_similar_images(similar_images, dir_output)
+    create_shortcuts_of_similar_images(similar_images, dir_output)
 
-        founded_images_folder = os.path.join(
-            target_path, SIMILAR_IMAGES_FOLDER)
-        return founded_images_folder
-
-    else:
-        print("wrong input")
+    founded_images_folder = os.path.join(
+        target_path, SIMILAR_IMAGES_FOLDER)
+    return founded_images_folder
 
 
 def get_possible_extensions():
@@ -169,6 +169,10 @@ def get_possible_extensions():
     extensions_default = []
     extensions = config.get_checked_extensions(config_DEFAULT)
     for ext in extensions:
-        extensions_default.append(ext[0])
+        if "/" in ext[0]:  # mutli extensions type like .jpg/.jpeg
+            extensions = ext[0].split("/")
+            extensions_default += extensions
+        else:
+            extensions_default.append(ext[0])
 
     return extensions_default

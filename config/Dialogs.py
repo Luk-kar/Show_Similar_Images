@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from .paths import get_AppData_folder_path, get_DEFAULTS_folder_path
 
 
-class Dialogs:  # todo values
+class Dialogs:
     def __init__(self):
         self.AppData_folder_path = get_AppData_folder_path()
         self.DEFAULTS_folder_path = get_DEFAULTS_folder_path(
