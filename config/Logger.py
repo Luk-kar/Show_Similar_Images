@@ -111,7 +111,7 @@ class Logger:
             datetime_object = datetime.now()
             return datetime_object.strftime("%Y_%m_%d-%H_%M")
 
-        to_write_down = f"[{os.path.dirname(dir_output)}]\nsimilarity: {similarity}\n"
+        to_write_down = f"{os.path.dirname(dir_output)}\nsimilarity: {similarity}\n"
 
         for image_list in similar_images:
 
