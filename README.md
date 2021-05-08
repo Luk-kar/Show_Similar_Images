@@ -1,7 +1,7 @@
 <h1 align="center">Show Similar Images</h1>
 
 <div align="center">
-</br>This program shows similar images in the given folder.  
+</br>This program shows similar images in the given folder
 </br>
 </br>
 </div>
