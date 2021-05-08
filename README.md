@@ -13,7 +13,7 @@
 
 ## Getting Started 💡
 
-Run `python Find_similar_images` command line in the directory where the folder exists
+Run `python Show_Similar_Images` command line in the directory where the folder exists
 
 To run only the UI version you don't have to provide any arguments, just press "Enter"
 
