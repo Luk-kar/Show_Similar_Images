@@ -3,6 +3,7 @@
 <div align="center">
 </br>This program shows similar images in the given folder.  
 </br>
+</br>
 </div>
 
 ![how_program_works_image_folder](docs/images/how_it_works_001.png)
@@ -24,7 +25,7 @@ You can also create your executable: [link](https://www.youtube.com/watch?v=UZX5
 
 ## Using UI version 👀
 
-![main window](docs/images/main_window.png)
+![main window](docs/images/How_to_use.png)
 
 1. Choose a folder with images to compare each image to another.
 2. Pick at least one desired file extension checkbox.
@@ -35,7 +36,7 @@ You can also create your executable: [link](https://www.youtube.com/watch?v=UZX5
 
 ## Setup 💾
 
-![setup menu](docs/images/setup.png)
+![setup menu](docs/images/Setup.png)
 
 The areas marked **in red** are **options** which can be **saved**, **loaded** as setup files  
 Setups are stored in `Show_Similar_Images/appData/`
@@ -50,14 +51,14 @@ To process setups, in menu **"Setup"** are located following options:
 
 ## Logs 📜
 
-![logs menu](docs/images/logs.png)
+![logs menu](docs/images/Logs.png)
 
-In this menu, you can choose if **founded similar images logs** appear or not  
+In this menu, you canP choose if **founded similar images logs** appear or not  
 the **Logs** are saved in the image directory
 
 ## Help ℹ️
 
-![help menu](docs/images/help.png)
+![help menu](docs/images/Help.png)
 
 It consists of:
 
@@ -72,7 +73,7 @@ used through the whole program
 ## Running the tests 🧪
 
 To run tests, write down in the terminal, in the program folder:
-`python tests.py`
+`python tests`
 
 ## Built With 🧰
 
