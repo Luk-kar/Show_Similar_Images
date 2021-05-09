@@ -5,6 +5,8 @@ import sys
 def get_AppData_folder_path():
 
     appData_folder = os.path.join(set_app_path(), "appData")
+
+    print(os.path.abspath(appData_folder))
     if not os.path.isdir(appData_folder):
         os.mkdir(appData_folder)
 
@@ -32,7 +34,8 @@ def set_app_path():
     if getattr(sys, 'frozen', False) or program_name.endswith("__main__.py"):
         application_path = ""  # relative ./
     elif __file__:
-        application_path = f"{program_name}/"
+        application_path = '' if program_name == 'test.py' else f"{program_name}/"
+
     else:
         raise IOError("no path")
 
