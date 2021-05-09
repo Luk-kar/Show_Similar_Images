@@ -15,7 +15,7 @@
 
 Run `python Show_Similar_Images` command line in the directory where the folder exists
 
-To run only the UI version you don't have to provide any arguments, just press "Enter"
+To run only the UI version you don't have to provide any arguments, just press the "Enter"
 
 If you want to use the console: [**How to use console**](docs/How_to_use_console.md)
 
@@ -53,7 +53,7 @@ To process setups, in menu **"Setup"** are located following options:
 
 ![logs menu](docs/images/Logs.png)
 
-In this menu, you canP choose if **founded similar images logs** appear or not  
+In this menu, you can choose if **founded similar images logs** appear or not  
 the **Logs** are saved in the image directory
 
 ## Help ℹ️

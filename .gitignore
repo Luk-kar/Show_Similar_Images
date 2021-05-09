@@ -1,4 +1,12 @@
+# untracked repositories
 **/__pycache__
+__pycache__
 .vscode/*
 appData/*
 tests/data/_similar images/
+build
+dist
+# untracked code
+__main__.spec
+__main__.exe
+show similar images.exe
