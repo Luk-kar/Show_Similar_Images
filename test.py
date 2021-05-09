@@ -333,6 +333,58 @@ class TestFindSimilarImages(unittest.TestCase):
             "Founded files are not correct"
         )
 
+    def test_bad_path(self):
+
+        image_folder = "bad path"
+
+        extensions = self.args["extensions"][3]
+
+        similarity = self.args["similarity"][2]
+
+        isLog = self.args["isLog"][0]
+
+        with self.assertRaises(ValueError):
+            find_similar_images(image_folder, extensions, similarity, isLog)
+
+    def test_bad_extension(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = "png."
+
+        similarity = self.args["similarity"][2]
+
+        isLog = self.args["isLog"][0]
+
+        with self.assertRaises(ValueError):
+            find_similar_images(image_folder, extensions, similarity, isLog)
+
+    def test_bad_similarity(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][3]
+
+        similarity = 10.0
+
+        isLog = self.args["isLog"][0]
+
+        with self.assertRaises(ValueError):
+            find_similar_images(image_folder, extensions, similarity, isLog)
+
+    def test_bad_isLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][3]
+
+        similarity = self.args["similarity"][2]
+
+        isLog = "Meh"
+
+        with self.assertRaises(ValueError):
+            find_similar_images(image_folder, extensions, similarity, isLog)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -138,6 +138,9 @@ def find_similar_images(target_path, extensions_chosen, similarity, isLog):
     if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
         raise ValueError(similarity_error_message)
 
+    if not bool(int(isLog)) in [False, True]:
+        raise ValueError(f"Invalid isLog value: {isLog}")
+
     extensions_chosen = tuple(extensions_chosen)
 
     paths_files_source = get_images_paths(target_path, extensions_chosen)
