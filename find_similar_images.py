@@ -71,8 +71,7 @@ def create_dir_for_similar_images(path_to_shortcuts):
 
 def get_path_for_shortcut(image, path_to_shortcuts):
 
-    image_file = os.path.basename(image)
-    image_name = os.path.splitext(image_file)[0]
+    image_name = os.path.basename(image)
     path = os.path.join(path_to_shortcuts, f'{image_name}.lnk')
 
     return path

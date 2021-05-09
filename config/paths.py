@@ -6,7 +6,6 @@ def get_AppData_folder_path():
 
     appData_folder = os.path.join(set_app_path(), "appData")
 
-    print(os.path.abspath(appData_folder))
     if not os.path.isdir(appData_folder):
         os.mkdir(appData_folder)
 

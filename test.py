@@ -17,7 +17,7 @@ class TestFindSimilarImages(unittest.TestCase):
 
         self.args = {
             "folder path": self.chosen_images,
-            "extensions": [".png", "jpg.", "jpeg.", "bmp."],
+            "extensions": [".png", "jpg.", "jpeg.", ".bmp"],
             "similarity": [0.0, 0.5, 0.8, 1.0],
             "isLog": [0, 1]
         }
@@ -46,20 +46,15 @@ class TestFindSimilarImages(unittest.TestCase):
     def change_extensions_list_to_string(self, extensions):
         return ",".join(extensions)
 
+    # before each test
     def setUp(self):
         if self.similar_images_folder_exists():
             shutil.rmtree(self._similar_images_path)
 
-    # def tearDown(self):
-    #     print("tearDown")
-
-    # @classmethod
-    # def tearDownClass(cls):
-    #     print("tearDownClass")
-
-    # @classmethod
-    # def setUpClass(cls):
-    #     print("setUpClass")
+    # after each test
+    def tearDown(self):
+        if self.similar_images_folder_exists():
+            shutil.rmtree(self._similar_images_path)
 
     def log_find_path(self):
 
@@ -104,7 +99,8 @@ class TestFindSimilarImages(unittest.TestCase):
     def files_in_folder_exists(self, founded_images):
 
         def get_no_extension(filename):
-            return filename.rsplit(".", 1)[0]
+            # rid off .lnk
+            return filename[:-4]
 
         directory = self._similar_images_path
         existing_files = []
@@ -112,18 +108,156 @@ class TestFindSimilarImages(unittest.TestCase):
         for path, dirs, files in os.walk(directory):
             for f in files:
                 if not f.endswith('.log'):
-                    no_ext = get_no_extension(f)
-                    if no_ext[0] == "_":
-                        no_ext = no_ext[1:]
-                    existing_files.append(no_ext)
-
-        for count, found in enumerate(founded_images):
-            founded_images[count] = get_no_extension(found)
-
-        print(sorted(founded_images))
-        print(sorted(existing_files))
+                    if f[0] == "_":
+                        f = f[1:]
+                    f = get_no_extension(f)
+                    existing_files.append(f)
 
         return sorted(founded_images) == sorted(existing_files)
+
+    def test_bmp_08_noLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][3]
+
+        similarity = self.args["similarity"][2]
+
+        isLog = self.args["isLog"][0]
+
+        find_similar_images(image_folder, extensions, similarity, isLog)
+
+        self.assertTrue(
+            self.similar_images_folder_exists(),
+            f"folder was not created:\n{self._similar_images_path}"
+        )
+
+        self.assertFalse(
+            self.log_exists(),
+            "log file was created, it should not exists"
+        )
+
+        founded_images = [
+        ]
+
+        self.assertTrue(
+            self.files_in_folder_exists(founded_images),
+            "Founded files are not correct"
+        )
+
+    def test_bmp_08_isLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][3]
+
+        similarity = self.args["similarity"][2]
+
+        isLog = self.args["isLog"][1]
+
+        find_similar_images(image_folder, extensions, similarity, isLog)
+
+        self.assertTrue(
+            self.similar_images_folder_exists(),
+            f"folder was not created:\n{self._similar_images_path}"
+        )
+
+        self.assertTrue(
+            self.log_exists(),
+            "log file was not created"
+        )
+
+        founded_images = [
+        ]
+
+        self.assertTrue(
+            self.files_in_folder_exists(founded_images),
+            "Founded files are not correct"
+        )
+        self.assertTrue(
+            self.log_is_correct(image_folder, similarity, founded_images),
+            "The log is corrupted "
+        )
+
+    def test_png_00_isLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][0]
+
+        similarity = self.args["similarity"][0]
+
+        isLog = self.args["isLog"][1]
+
+        find_similar_images(image_folder, extensions, similarity, isLog)
+
+        self.assertTrue(
+            self.similar_images_folder_exists(),
+            f"folder was not created:\n{self._similar_images_path}"
+        )
+
+        self.assertTrue(
+            self.log_exists(),
+            "log file was not created"
+        )
+
+        founded_images = [
+            "changed.png",
+            "diff_size.png",
+            "same 001.png",
+            "same 002.png",
+            "white_bg.png",
+            "white_bg_with_black_sq.png"
+        ]
+
+        self.assertTrue(
+            self.files_in_folder_exists(founded_images),
+            "Founded files are not correct"
+        )
+        self.assertTrue(
+            self.log_is_correct(image_folder, similarity, founded_images),
+            "The log is corrupted "
+        )
+
+    def test_png_05_isLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][0]
+
+        similarity = self.args["similarity"][1]
+
+        isLog = self.args["isLog"][1]
+
+        find_similar_images(image_folder, extensions, similarity, isLog)
+
+        self.assertTrue(
+            self.similar_images_folder_exists(),
+            f"folder was not created:\n{self._similar_images_path}"
+        )
+
+        self.assertTrue(
+            self.log_exists(),
+            "log file was not created"
+        )
+
+        founded_images = [
+            "changed.png",
+            "diff_size.png",
+            "same 001.png",
+            "same 002.png",
+            "white_bg.png",
+            "white_bg_with_black_sq.png",
+        ]
+
+        self.assertTrue(
+            self.files_in_folder_exists(founded_images),
+            "Founded files are not correct"
+        )
+        self.assertTrue(
+            self.log_is_correct(image_folder, similarity, founded_images),
+            "The log is corrupted "
+        )
 
     def test_png_08_isLog(self):
 
@@ -152,6 +286,41 @@ class TestFindSimilarImages(unittest.TestCase):
             self.images["same 001.png"],
             self.images["same 002.png"],
             self.images["white_bg.png"]
+        ]
+
+        self.assertTrue(
+            self.log_is_correct(image_folder, similarity, founded_images),
+            "The log is corrupted "
+        )
+
+        self.assertTrue(
+            self.files_in_folder_exists(founded_images),
+            "Founded files are not correct"
+        )
+
+    def test_png_10_isLog(self):
+
+        image_folder = self.args["folder path"]
+
+        extensions = self.args["extensions"][0]
+
+        similarity = self.args["similarity"][3]
+
+        isLog = self.args["isLog"][1]
+
+        find_similar_images(image_folder, extensions, similarity, isLog)
+
+        self.assertTrue(
+            self.similar_images_folder_exists(),
+            f"folder was not created:\n{self._similar_images_path}"
+        )
+
+        self.assertTrue(
+            self.log_exists(),
+            "log file was not created"
+        )
+
+        founded_images = [
         ]
 
         self.assertTrue(
