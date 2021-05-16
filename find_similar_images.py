@@ -115,14 +115,11 @@ def find_similar_images(target_path, extensions_chosen, similarity, isLog):
 
     extensions_possible = get_possible_extensions()
 
-    print("extensions_possible", extensions_possible)
-
     if not os.path.isdir(target_path):
         raise ValueError("Invalid folder path.")
     elif not target_path:
         raise ValueError("You didn't provide any path for your images.")
 
-    print("extensions_chosen", extensions_chosen)
     extensions_chosen = extensions_chosen.split(",")
     if len(extensions_chosen) == 0:
         raise ValueError(
