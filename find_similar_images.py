@@ -117,10 +117,11 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
 
     extensions_possible = get_possible_extensions()
 
-    if not os.path.isdir(source_path):
-        raise ValueError("Invalid folder path.")
+    if not os.path.exists(source_path):
+        raise ValueError("Invalid folder path or file path.")
     elif not source_path:
-        raise ValueError("You didn't provide any path for your images.")
+        raise ValueError(
+            "You didn't provide any path for your images or single image.")
 
     extensions_chosen = extensions_chosen.split(",")
     if len(extensions_chosen) == 0:
@@ -143,11 +144,19 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     if not bool(int(isLog)) in [False, True]:
         raise ValueError(f"Invalid isLog value: {isLog}")
 
+    if target_path is not None and target_path != "":
+        if not os.path.isdir(target_path):
+            raise ValueError(
+                f"Invalid target images path, it's not a folder: {target_path}")
+
     extensions_chosen = tuple(extensions_chosen)
 
     paths_files_source = get_images_paths(source_path, extensions_chosen)
 
-    paths_files_target = paths_files_source.copy()
+    if target_path is not None and target_path != "":
+        paths_files_target = target_path
+    else:
+        paths_files_target = paths_files_source.copy()
 
     similar_images = get_similar_images(
         paths_files_source, paths_files_target, similarity)
