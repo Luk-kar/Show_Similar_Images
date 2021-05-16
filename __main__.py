@@ -15,7 +15,7 @@ def run_console(_argv):
     config = DefaultArgs()
     config_default = config.get_DEFAULT()
 
-    folder_path = _argv[1]
+    source_path = _argv[1]
 
     if len(_argv) <= 2:
         accepted_extensions = config.get_checked_extensions(config_default)
@@ -39,7 +39,18 @@ def run_console(_argv):
     else:
         isLog = bool(int(_argv[4]))
 
-    find_similar_images(folder_path, chosen_extensions, similarity, isLog)
+    if len(_argv) <= 5:
+        target_path = None
+    else:
+        target_path = _argv[5]
+
+    find_similar_images(
+        source_path,
+        chosen_extensions,
+        similarity,
+        isLog,
+        target_path
+    )
 
 
 if __name__ == "__main__":

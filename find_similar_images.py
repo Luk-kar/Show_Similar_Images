@@ -111,13 +111,15 @@ def create_shortcut(path, image):
     shortcut.save()
 
 
-def find_similar_images(target_path, extensions_chosen, similarity, isLog):
+def find_similar_images(source_path, extensions_chosen, similarity, isLog, target_path):
+
+    # print(target_path)
 
     extensions_possible = get_possible_extensions()
 
-    if not os.path.isdir(target_path):
+    if not os.path.isdir(source_path):
         raise ValueError("Invalid folder path.")
-    elif not target_path:
+    elif not source_path:
         raise ValueError("You didn't provide any path for your images.")
 
     extensions_chosen = extensions_chosen.split(",")
@@ -143,14 +145,14 @@ def find_similar_images(target_path, extensions_chosen, similarity, isLog):
 
     extensions_chosen = tuple(extensions_chosen)
 
-    paths_files_source = get_images_paths(target_path, extensions_chosen)
+    paths_files_source = get_images_paths(source_path, extensions_chosen)
 
     paths_files_target = paths_files_source.copy()
 
     similar_images = get_similar_images(
         paths_files_source, paths_files_target, similarity)
 
-    dir_output = get_dir_output(target_path)
+    dir_output = get_dir_output(source_path)
 
     if isLog:
         Logger.create_log_of_similar_images(
@@ -159,7 +161,7 @@ def find_similar_images(target_path, extensions_chosen, similarity, isLog):
     create_shortcuts_of_similar_images(similar_images, dir_output)
 
     founded_images_folder = os.path.join(
-        target_path, SIMILAR_IMAGES_FOLDER)
+        source_path, SIMILAR_IMAGES_FOLDER)
     return founded_images_folder
 
 

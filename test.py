@@ -12,6 +12,10 @@ class TestFindSimilarImages(unittest.TestCase):
 
         self.chosen_images = os.path.abspath(
             os.path.join("tests", "data", "chosen images"))
+
+        self.target_images = os.path.join(
+            self.chosen_images, "target images"
+        )
         self._similar_images_path = os.path.join(
             self.chosen_images, "_similar images")
 
@@ -19,7 +23,8 @@ class TestFindSimilarImages(unittest.TestCase):
             "folder path": self.chosen_images,
             "extensions": [".png", "jpg.", "jpeg.", ".bmp"],
             "similarity": [0.0, 0.5, 0.8, 1.0],
-            "isLog": [0, 1]
+            "isLog": [0, 1],
+            "target path": [None, self.target_images]
         }
 
         images_names = [
@@ -125,7 +130,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][0]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -155,7 +168,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][1]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -189,7 +210,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][1]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -229,7 +258,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][1]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -269,7 +306,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][1]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -308,7 +353,15 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][1]
 
-        find_similar_images(image_folder, extensions, similarity, isLog)
+        target = self.args["target path"][0]
+
+        find_similar_images(
+            image_folder,
+            extensions,
+            similarity,
+            isLog,
+            target
+        )
 
         self.assertTrue(
             self.similar_images_folder_exists(),
@@ -343,8 +396,16 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][0]
 
+        target = self.args["target path"][0]
+
         with self.assertRaises(ValueError):
-            find_similar_images(image_folder, extensions, similarity, isLog)
+            find_similar_images(
+                image_folder,
+                extensions,
+                similarity,
+                isLog,
+                target
+            )
 
     def test_bad_extension(self):
 
@@ -356,8 +417,16 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][0]
 
+        target = self.args["target path"][0]
+
         with self.assertRaises(ValueError):
-            find_similar_images(image_folder, extensions, similarity, isLog)
+            find_similar_images(
+                image_folder,
+                extensions,
+                similarity,
+                isLog,
+                target
+            )
 
     def test_bad_similarity(self):
 
@@ -369,8 +438,16 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = self.args["isLog"][0]
 
+        target = self.args["target path"][0]
+
         with self.assertRaises(ValueError):
-            find_similar_images(image_folder, extensions, similarity, isLog)
+            find_similar_images(
+                image_folder,
+                extensions,
+                similarity,
+                isLog,
+                target
+            )
 
     def test_bad_isLog(self):
 
@@ -382,8 +459,16 @@ class TestFindSimilarImages(unittest.TestCase):
 
         isLog = "Meh"
 
+        target = self.args["target path"][0]
+
         with self.assertRaises(ValueError):
-            find_similar_images(image_folder, extensions, similarity, isLog)
+            find_similar_images(
+                image_folder,
+                extensions,
+                similarity,
+                isLog,
+                target
+            )
 
 
 if __name__ == "__main__":
