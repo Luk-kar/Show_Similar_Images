@@ -10,10 +10,6 @@ def run_GUI():
     MainGUIApp()
 
 
-def parse_extensions(_argv):
-    return tuple(_argv.split(","))
-
-
 def run_console(_argv):
 
     config = DefaultArgs()
@@ -30,7 +26,7 @@ def run_console(_argv):
 
         chosen_extensions = ",".join(chosen_extensions)
     else:
-        chosen_extensions = parse_extensions(_argv[2])
+        chosen_extensions = _argv[2]
 
     if len(_argv) <= 3:
         similarity = config.get_similarity(config_default)
