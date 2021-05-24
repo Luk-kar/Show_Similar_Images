@@ -126,10 +126,9 @@ def create_shortcut(path, image):
         tail = f"_{tail}"
         path = os.path.join(head, tail)
 
-        # To avoid situation when, you have the same file names in source folder and target folder
+        # To avoid situation when, you have the same file name in source folder and target folder
         if os.path.exists(path):
-            i_dirname = os.path.basename(os.path.dirname(image))
-            tail = f"{file_name}_{i_dirname}{ext}"
+            tail = f"{file_name}{ext}"
             path = os.path.join(head, tail)
 
     shell = win32com.client.Dispatch("WScript.Shell")
