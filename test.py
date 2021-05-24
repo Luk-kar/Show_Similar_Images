@@ -338,6 +338,7 @@ class TestFindSimilarImages(unittest.TestCase):
             "The log is corrupted "
         )
 
+        # todo
         self.assertTrue(
             self.files_in_folder_exists(founded_images),
             "Founded files are not correct"
@@ -374,12 +375,32 @@ class TestFindSimilarImages(unittest.TestCase):
         )
 
         founded_images = [
+            "same 001.png",
+            "same 002.png"
         ]
 
         self.assertTrue(
             self.log_is_correct(image_folder, similarity, founded_images),
             "The log is corrupted "
         )
+
+        def get_no_extension(filename):
+            # rid off .lnk
+            return filename[:-4]
+
+        directory = self._similar_images_path
+        existing_files = []
+
+        for path, dirs, files in os.walk(directory):
+            for f in files:
+                if not f.endswith('.log'):
+                    if f[0] == "_":
+                        f = f[1:]
+                    f = get_no_extension(f)
+                    existing_files.append(f)
+
+        print("founded_images", sorted(founded_images))
+        print("existing_files", sorted(existing_files))
 
         self.assertTrue(
             self.files_in_folder_exists(founded_images),

@@ -43,13 +43,34 @@ def get_similar_images(paths_files_source, paths_files_target, similarity_desire
 
     similar_images = init_similar_images(paths_files_source)
 
-    for source_path_file in paths_files_source:
-        for target_path_file in paths_files_target:
-            similarity_computed = compare_images(
-                source_path_file, target_path_file)
-            if similarity_computed > similarity_desired:
-                similar_images[source_path_file].append(target_path_file)
-                paths_files_source.remove(target_path_file)
+    if paths_files_source == paths_files_target:
+
+        for source_path_file in paths_files_source:
+
+            for target_path_file in paths_files_target:
+
+                similarity_computed = compare_images(
+                    source_path_file, target_path_file)
+
+                if similarity_computed >= similarity_desired:
+
+                    similar_images[source_path_file].append(target_path_file)
+                    paths_files_source.remove(target_path_file)
+
+    else:
+
+        for source_path_file in paths_files_source:
+
+            similar_images[source_path_file].append(source_path_file)
+
+            for target_path_file in paths_files_target:
+
+                similarity_computed = compare_images(
+                    source_path_file, target_path_file)
+
+                if similarity_computed >= similarity_desired:
+                    similar_images[source_path_file].append(target_path_file)
+                    paths_files_target.remove(target_path_file)
 
     return similar_images
 
@@ -57,8 +78,7 @@ def get_similar_images(paths_files_source, paths_files_target, similarity_desire
 def get_dir_path(image_path, dir_output):
 
     filename = os.path.basename(image_path)
-    dir_name = os.path.splitext(filename)[0]
-    path_to_shortcuts = f"{dir_output}\\{dir_name}"
+    path_to_shortcuts = f"{dir_output}\\{filename}"
 
     return path_to_shortcuts
 
@@ -101,8 +121,16 @@ def create_shortcut(path, image):
     file_name = file_name.rsplit('\\', 1)[-1]
     containing_folder_name = head.rsplit('\\', 1)[-1]
 
+    # To show source reference image as first
     if file_name == containing_folder_name:
-        path = f"{head}\\_{tail}"
+        tail = f"_{tail}"
+        path = os.path.join(head, tail)
+
+        # To avoid situation when, you have the same file names in source folder and target folder
+        if os.path.exists(path):
+            i_dirname = os.path.basename(os.path.dirname(image))
+            tail = f"{file_name}_{i_dirname}{ext}"
+            path = os.path.join(head, tail)
 
     shell = win32com.client.Dispatch("WScript.Shell")
     shortcut = shell.CreateShortCut(path)
@@ -154,7 +182,7 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     paths_files_source = get_images_paths(source_path, extensions_chosen)
 
     if target_path is not None and target_path != "":
-        paths_files_target = target_path
+        paths_files_target = get_images_paths(target_path, extensions_chosen)
     else:
         paths_files_target = paths_files_source.copy()
 
