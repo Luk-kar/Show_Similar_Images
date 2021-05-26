@@ -103,7 +103,7 @@ class Logger:
         return value
 
     @staticmethod
-    def create_log_of_similar_images(similar_images, similarity, dir_output):
+    def create_log_of_similar_images(similar_images, similarity, dir_output, target_path):
 
         def get_current_date():
             """get the current date"""
@@ -111,7 +111,12 @@ class Logger:
             datetime_object = datetime.now()
             return datetime_object.strftime("%Y_%m_%d-%H_%M")
 
-        to_write_down = f"{os.path.dirname(dir_output)}\nsimilarity: {similarity}\n"
+        if not target_path:
+            target_path = ""
+        else:
+            target_path = f"target folder:\n{target_path}\n"
+
+        to_write_down = f"source folder:\n{os.path.dirname(dir_output)}\n{target_path}similarity: {similarity}\n"
 
         for image_list in similar_images:
 

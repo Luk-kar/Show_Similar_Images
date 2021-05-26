@@ -12,7 +12,9 @@ SIMILAR_IMAGES_FOLDER = "_similar images"
 def get_dir_output(target_path):
 
     dir_output = os.path.abspath(os.path.join(
-        target_path, SIMILAR_IMAGES_FOLDER))
+        os.path.dirname(target_path),
+        SIMILAR_IMAGES_FOLDER)
+    )
     if not os.path.isdir(dir_output):
         os.mkdir(dir_output)
 
@@ -178,7 +180,15 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
 
     extensions_chosen = tuple(extensions_chosen)
 
-    paths_files_source = get_images_paths(source_path, extensions_chosen)
+    if os.path.isfile(source_path):
+        if source_path.endswith(tuple(extensions_possible)):
+            paths_files_source = [source_path]
+        else:
+            raise ValueError(
+                f"Invalid target images path, it's not a folder: {target_path}")
+
+    else:
+        paths_files_source = get_images_paths(source_path, extensions_chosen)
 
     if target_path is not None and target_path != "":
         paths_files_target = get_images_paths(target_path, extensions_chosen)
@@ -192,7 +202,11 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
 
     if isLog:
         Logger.create_log_of_similar_images(
-            similar_images, similarity, dir_output)
+            similar_images,
+            similarity,
+            dir_output,
+            target_path
+        )
 
     create_shortcuts_of_similar_images(similar_images, dir_output)
 
