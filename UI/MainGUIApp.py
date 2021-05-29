@@ -29,16 +29,20 @@ class Main:
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
-        self.target_path_title = tk.Label(self.frame, text="images path:")
+        self.target_path_title = tk.Label(
+            self.frame, text="Source images path:")
         self.target_path_title.grid(row=0, column=0, stick="w")
 
-        self.target_path_placeholder = "Enter your folder path..."
+        entry_width = 300
+
+        self.target_placeholder = "Enter your source folder path..."
         self.target_path_entry = EntryWithPlaceholder(
-            self.frame, self.target_path_placeholder)
+            self.frame, self.target_placeholder)
         self.target_path_entry
-        self.target_path_entry.grid(row=1, column=0, ipadx=200, stick="we")
+        self.target_path_entry.grid(
+            row=1, column=0, ipadx=entry_width, stick="we")
         self.set_entry_value(self.target_path_entry,
-                             config.get_images_folder_path(config_DEFAULT))
+                             config.get_source_path(config_DEFAULT))
 
         self.img_open_folder = tk.PhotoImage(
             file=f"{set_app_path()}UI/assets/open_folder.gif")
@@ -48,19 +52,32 @@ class Main:
         self.button_choose_folder.grid(
             column=1, row=1, padx=(5, 0), stick="w")
 
+        self.target_path_title = tk.Label(
+            self.frame, text="Target images path:")
+        self.target_path_title.grid(row=2, column=0, pady=(10, 0), stick="w")
+
+        self.source_placeholder = "Enter your source folder path..."
+        self.source_path_entry = EntryWithPlaceholder(
+            self.frame, self.source_placeholder)
+        self.source_path_entry
+        self.source_path_entry.grid(
+            row=3, column=0, ipadx=entry_width, stick="we")
+        self.set_entry_value(self.source_path_entry,
+                             config.get_target_path(config_DEFAULT))
+
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
-        self.extensions_title.grid(row=2, column=0, pady=(15, 0), stick="w")
+        self.extensions_title.grid(row=4, column=0, pady=(15, 0), stick="w")
 
         self.extensions = config.get_checked_extensions(config_DEFAULT)
         self.checkbars = Checkbar(self.frame, self.extensions)
-        self.checkbars.grid(row=3, column=0, pady=(0, 15), stick="w")
+        self.checkbars.grid(row=5, column=0, pady=(0, 15), stick="w")
 
         self.similarity_title = tk.Label(self.frame, text="Similarity:")
-        self.similarity_title.grid(row=4, column=0, stick="w")
+        self.similarity_title.grid(row=6, column=0, stick="w")
 
         self.similarity_entry = EntryWithPlaceholder(
             self.frame, "Enter value from 0.0 to 1.0")
-        self.similarity_entry.grid(row=5, column=0, ipadx=10, stick="w")
+        self.similarity_entry.grid(row=7, column=0, ipadx=10, stick="w")
         self.set_entry_value(self.similarity_entry,
                              config.get_similarity(config_DEFAULT))
 
@@ -177,7 +194,7 @@ class Main:
 
         entry = self.entry_set_text(entry, entry_content)
 
-        if entry_content != self.target_path_placeholder:
+        if entry_content != self.target_placeholder:
             entry.config(fg='black')
         else:
             entry.config(fg='grey')

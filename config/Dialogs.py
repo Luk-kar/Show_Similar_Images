@@ -27,6 +27,7 @@ class Dialogs:
     def saving_dialogs_to_file(
             DIALOGS_path,
             checkedboxes,
+            source_path,
             target_path,
             similarity
     ):
@@ -34,7 +35,8 @@ class Dialogs:
         config = ConfigParser()
 
         config["MATCHING"] = {
-            "images path": target_path,
+            "source path": source_path,
+            "target path": target_path
         }
 
         config["FILE TYPES"] = {
@@ -77,8 +79,12 @@ class Dialogs:
         return config
 
     @staticmethod
-    def get_images_folder_path(config):
-        return config.get("MATCHING", "images path")
+    def get_source_path(config):
+        return config.get("MATCHING", "source path")
+
+    @staticmethod
+    def get_target_path(config):
+        return config.get("MATCHING", "target path")
 
     @staticmethod
     def get_similarity(config):
@@ -94,6 +100,7 @@ class Dialogs:
 
         valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
+        source_path = ""
         target_path = ""
         similarity = 0.8
 
@@ -101,5 +108,6 @@ class Dialogs:
             DIALOGS_path,
             checkedboxes,
             target_path,
+            source_path,
             similarity
         )
