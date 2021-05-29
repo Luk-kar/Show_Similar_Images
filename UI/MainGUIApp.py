@@ -29,41 +29,55 @@ class Main:
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
-        self.target_path_title = tk.Label(
+        self.source_path_title = tk.Label(
             self.frame, text="Source images path:")
-        self.target_path_title.grid(row=0, column=0, stick="w")
+        self.source_path_title.grid(row=0, column=0, stick="w")
 
         entry_width = 300
 
-        self.target_placeholder = "Enter your source folder path..."
-        self.target_path_entry = EntryWithPlaceholder(
-            self.frame, self.target_placeholder)
-        self.target_path_entry
-        self.target_path_entry.grid(
+        self.source_placeholder = "Enter your source folder or file path..."
+        self.source_path_entry = EntryWithPlaceholder(
+            self.frame, self.source_placeholder)
+        self.source_path_entry
+        self.source_path_entry.grid(
             row=1, column=0, ipadx=entry_width, stick="we")
-        self.set_entry_value(self.target_path_entry,
+        self.set_entry_value(self.source_path_entry,
                              config.get_source_path(config_DEFAULT))
 
         self.img_open_folder = tk.PhotoImage(
             file=f"{set_app_path()}UI/assets/open_folder.gif")
-        self.button_choose_folder = tk.Button(
-            self.frame, command=self.target_btn_folder_open)
-        self.button_choose_folder.config(image=self.img_open_folder)
-        self.button_choose_folder.grid(
+        self.button_choose_source_folder = tk.Button(
+            self.frame, command=self.source_folder_open)
+        self.button_choose_source_folder.config(image=self.img_open_folder)
+        self.button_choose_source_folder.grid(
             column=1, row=1, padx=(5, 0), stick="w")
+
+        self.img_open_file = tk.PhotoImage(
+            file=f"{set_app_path()}UI/assets/open_file.gif")
+        self.button_choose_source_file = tk.Button(
+            self.frame, command=self.source_file_open)
+        self.button_choose_source_file.config(image=self.img_open_file)
+        self.button_choose_source_file.grid(
+            column=2, row=1, padx=(5, 0), stick="w")
 
         self.target_path_title = tk.Label(
             self.frame, text="Target images path:")
         self.target_path_title.grid(row=2, column=0, pady=(10, 0), stick="w")
 
-        self.source_placeholder = "Enter your source folder path..."
-        self.source_path_entry = EntryWithPlaceholder(
-            self.frame, self.source_placeholder)
-        self.source_path_entry
-        self.source_path_entry.grid(
+        self.target_placeholder = "Enter your target folder path..."
+        self.target_path_entry = EntryWithPlaceholder(
+            self.frame, self.target_placeholder)
+        self.target_path_entry
+        self.target_path_entry.grid(
             row=3, column=0, ipadx=entry_width, stick="we")
-        self.set_entry_value(self.source_path_entry,
+        self.set_entry_value(self.target_path_entry,
                              config.get_target_path(config_DEFAULT))
+
+        self.button_choose_target_folder = tk.Button(
+            self.frame, command=self.target_folder_open)
+        self.button_choose_target_folder.config(image=self.img_open_folder)
+        self.button_choose_target_folder.grid(
+            column=1, row=3, padx=(5, 0), stick="w")
 
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
         self.extensions_title.grid(row=4, column=0, pady=(15, 0), stick="w")
@@ -91,25 +105,44 @@ class Main:
 
         menubar = MenuBar(self.master, self)
 
-    def target_btn_folder_open(self):
+    def source_folder_open(self):
 
-        chosen_directory = self.btn_find_path(self.target_path_entry,
+        self.get_folder_path(self.source_path_entry, "Source folder")
+
+    def target_folder_open(self):
+
+        self.get_folder_path(self.target_path_entry, "Target folder")
+
+    def get_folder_path(self, entry, title):  # todo
+
+        chosen_directory = self.btn_find_path(entry,
                                               lambda: filedialog.askdirectory(
-                                                  title="Source folder")
+                                                  title=title)
                                               )
 
-        count = self.check_how_many_valid_files(chosen_directory)
+        if chosen_directory:
+            count = self.check_how_many_valid_files(chosen_directory)
 
-        if not self.get_extensions():
-            return messagebox.showwarning(
-                "Failed!", f"You did NOT choose any file extensions!")
+            if not self.get_extensions():
+                return messagebox.showwarning(
+                    "Failed!", f"You did NOT choose any file extensions!")
 
-        if count:
-            messagebox.showwarning(
-                "Success!", f"There are {count} images to check in folder!")
-        else:
-            messagebox.showwarning(
-                "Failed!", f"There are NO, NADA, ZERO, ZINCH, 0\nimages to check in folder!")
+            if count:
+                messagebox.showwarning(
+                    "Success!", f"There are {count} images to check in folder!")
+            else:
+                messagebox.showwarning(
+                    "Failed!", f"There are NO, NADA, ZERO, ZINCH, 0\nimages to check in folder!")
+
+    def source_file_open(self):
+
+        self.get_file_path(self.source_path_entry, "Source file")
+
+    def get_file_path(self, entry, title):
+        self.btn_find_path(entry,
+                           lambda: filedialog.askopenfilename(
+                               title=title)
+                           )
 
     def check_how_many_valid_files(self, chosen_directory):
 
@@ -131,13 +164,15 @@ class Main:
 
     def set_entry_value(self, entry, value):
 
-        entry.delete(0, tk.END)
-        entry.insert(0, value)
-        entry.config(fg='black')
+        if value:
+            entry.delete(0, tk.END)
+            entry.insert(0, value)
+            entry.config(fg='black')
 
     def run_matching_images(self):
 
         valid_extensions = self.get_extensions()
+        source_path = self.source_path_entry.get()
         target_path = self.target_path_entry.get()
         similarity = self.similarity_entry.get()
 
@@ -145,10 +180,11 @@ class Main:
 
         try:
             founded_images_folder = find_similar_images(
-                target_path,
+                source_path,
                 valid_extensions,
                 similarity,
-                isLog
+                isLog,
+                target_path
             )
             messagebox.showinfo(
                 "Success!", f"Now look for your target directory for results!\n{target_path}")
