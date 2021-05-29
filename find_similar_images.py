@@ -173,7 +173,8 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     if not bool(int(isLog)) in [False, True]:
         raise ValueError(f"Invalid isLog value: {isLog}")
 
-    if target_path is not None and target_path != "":
+    if target_path is not None and target_path != "" and target_path != "Enter your target folder path...":
+        print("target path_", target_path, "_")
         if not os.path.isdir(target_path):
             raise ValueError(
                 f"Invalid target images path, it's not a folder: {target_path}")
@@ -185,7 +186,7 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
             paths_files_source = [source_path]
         else:
             raise ValueError(
-                f"Invalid target images path, it's not a folder: {target_path}")
+                f"Invalid source image/images path, it's not a file or folder: {target_path}")
 
     else:
         paths_files_source = get_images_paths(source_path, extensions_chosen)

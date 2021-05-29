@@ -20,30 +20,35 @@ class Main:
     def __init__(self, master):
         self.master = master
 
+        # upload data
         config = Dialogs()
         config_DEFAULT = config.get_DEFAULT()
 
+        # create frame
         master.title("Find similar images")
         master.iconbitmap(
             f"{set_app_path()}UI/assets/app.ico")
 
         self.frame = tk.Frame(self.master, padx=10, pady=15)
 
+        # source entry
+        entry_width = 300
+
+        # source title
         self.source_path_title = tk.Label(
             self.frame, text="Source images path:")
         self.source_path_title.grid(row=0, column=0, stick="w")
 
-        entry_width = 300
-
+        # source entry
         self.source_placeholder = "Enter your source folder or file path..."
         self.source_path_entry = EntryWithPlaceholder(
             self.frame, self.source_placeholder)
-        self.source_path_entry
         self.source_path_entry.grid(
             row=1, column=0, ipadx=entry_width, stick="we")
         self.set_entry_value(self.source_path_entry,
                              config.get_source_path(config_DEFAULT))
 
+        # source open folder
         self.img_open_folder = tk.PhotoImage(
             file=f"{set_app_path()}UI/assets/open_folder.gif")
         self.button_choose_source_folder = tk.Button(
@@ -52,6 +57,7 @@ class Main:
         self.button_choose_source_folder.grid(
             column=1, row=1, padx=(5, 0), stick="w")
 
+        # source open file
         self.img_open_file = tk.PhotoImage(
             file=f"{set_app_path()}UI/assets/open_file.gif")
         self.button_choose_source_file = tk.Button(
@@ -60,41 +66,50 @@ class Main:
         self.button_choose_source_file.grid(
             column=2, row=1, padx=(5, 0), stick="w")
 
+        # target title
         self.target_path_title = tk.Label(
             self.frame, text="Target images path:")
         self.target_path_title.grid(row=2, column=0, pady=(10, 0), stick="w")
 
-        self.target_placeholder = "Enter your target folder path..."
+        # target entry
+        self.target_placeholder = "Enter your target folder path... (Optional)"
         self.target_path_entry = EntryWithPlaceholder(
-            self.frame, self.target_placeholder)
-        self.target_path_entry
+            self.frame,
+            self.target_placeholder
+        )
         self.target_path_entry.grid(
             row=3, column=0, ipadx=entry_width, stick="we")
         self.set_entry_value(self.target_path_entry,
                              config.get_target_path(config_DEFAULT))
 
+        # target open folder
         self.button_choose_target_folder = tk.Button(
             self.frame, command=self.target_folder_open)
         self.button_choose_target_folder.config(image=self.img_open_folder)
         self.button_choose_target_folder.grid(
             column=1, row=3, padx=(5, 0), stick="w")
 
+        # Extensions title
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
         self.extensions_title.grid(row=4, column=0, pady=(15, 0), stick="w")
 
+        # Extensions checkbars
         self.extensions = config.get_checked_extensions(config_DEFAULT)
         self.checkbars = Checkbar(self.frame, self.extensions)
         self.checkbars.grid(row=5, column=0, pady=(0, 15), stick="w")
 
+        # similarity title
         self.similarity_title = tk.Label(self.frame, text="Similarity:")
         self.similarity_title.grid(row=6, column=0, stick="w")
 
+        # similarity entry
         self.similarity_entry = EntryWithPlaceholder(
             self.frame, "Enter value from 0.0 to 1.0")
         self.similarity_entry.grid(row=7, column=0, ipadx=10, stick="w")
         self.set_entry_value(self.similarity_entry,
                              config.get_similarity(config_DEFAULT))
 
+        # Run program button
         self.button_run_program = tk.Button(
             self.master, text='Find similar images', width=25, bg="#f5f5f5", command=self.run_matching_images)
         self.button_run_program.grid(
@@ -141,7 +156,12 @@ class Main:
     def get_file_path(self, entry, title):
         self.btn_find_path(entry,
                            lambda: filedialog.askopenfilename(
-                               title=title)
+                               title=title,
+                               filetypes=[
+                                   ("png files", "*.png"),
+                                   ("jpg files", ("*.jpg", "*.jpeg", "*.jpe")),
+                                   ("bmp files", "*.bmp")
+                               ])
                            )
 
     def check_how_many_valid_files(self, chosen_directory):

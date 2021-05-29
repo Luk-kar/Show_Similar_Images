@@ -98,7 +98,7 @@ class Dialogs:
 
         DIALOGS_path = self.DEFAULT_file_path
 
-        valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+        valid_extensions = [[".png", 1], [".jpg/.jpeg/.jpe", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
         source_path = ""
         target_path = ""
