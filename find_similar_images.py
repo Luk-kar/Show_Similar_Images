@@ -145,8 +145,6 @@ def create_shortcut(path, image):
 
 def find_similar_images(source_path, extensions_chosen, similarity, isLog, target_path):
 
-    # print(target_path)
-
     extensions_possible = get_possible_extensions()
 
     if not os.path.exists(source_path):
@@ -202,24 +200,18 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     similar_images = get_similar_images(
         paths_files_source, paths_files_target, similarity)
 
-    print("source_path", source_path)
-
-    dir_output = get_dir_output(source_path)
-
-    print("dir_output", dir_output)
+    founded_images_folder = get_dir_output(source_path)
 
     if isLog:
         Logger.create_log_of_similar_images(
             similar_images,
             similarity,
-            dir_output,
+            founded_images_folder,
             target_path
         )
 
-    create_shortcuts_of_similar_images(similar_images, dir_output)
+    create_shortcuts_of_similar_images(similar_images, founded_images_folder)
 
-    founded_images_folder = os.path.join(
-        source_path, SIMILAR_IMAGES_FOLDER)
     return founded_images_folder
 
 
