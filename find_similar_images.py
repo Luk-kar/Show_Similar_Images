@@ -11,8 +11,11 @@ SIMILAR_IMAGES_FOLDER = "_similar images"
 
 def get_dir_output(target_path):
 
+    if not os.path.isdir(target_path):
+        target_path = os.path.dirname(target_path)
+
     dir_output = os.path.abspath(os.path.join(
-        os.path.dirname(target_path),
+        target_path,
         SIMILAR_IMAGES_FOLDER)
     )
     if not os.path.isdir(dir_output):
@@ -174,7 +177,7 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
         raise ValueError(f"Invalid isLog value: {isLog}")
 
     if target_path is not None and target_path != "" and target_path != "Enter your target folder path...":
-        print("target path_", target_path, "_")
+        # print("target path_", target_path, "_")
         if not os.path.isdir(target_path):
             raise ValueError(
                 f"Invalid target images path, it's not a folder: {target_path}")
@@ -199,7 +202,11 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     similar_images = get_similar_images(
         paths_files_source, paths_files_target, similarity)
 
+    print("source_path", source_path)
+
     dir_output = get_dir_output(source_path)
+
+    print("dir_output", dir_output)
 
     if isLog:
         Logger.create_log_of_similar_images(
