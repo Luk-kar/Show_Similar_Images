@@ -207,6 +207,7 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
             similar_images,
             similarity,
             founded_images_folder,
+            source_path,
             target_path
         )
 
