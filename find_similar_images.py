@@ -1,8 +1,12 @@
+"""
+This module create log of list of similar images and also shortcutes to them.
+Main function returns dir path in which are contained lists of similar images
+"""
+
 import os
 import win32com.client
 
 from compare_two_images import compare_images
-import config as default_values
 from config.Dialogs import Dialogs
 from config.Logger import Logger
 
@@ -14,9 +18,11 @@ def get_dir_output(target_path):
     if not os.path.isdir(target_path):
         target_path = os.path.dirname(target_path)
 
-    dir_output = os.path.abspath(os.path.join(
-        target_path,
-        SIMILAR_IMAGES_FOLDER)
+    dir_output = os.path.abspath(
+        os.path.join(
+            target_path,
+            SIMILAR_IMAGES_FOLDER
+        )
     )
     if not os.path.isdir(dir_output):
         os.mkdir(dir_output)
@@ -25,18 +31,22 @@ def get_dir_output(target_path):
 
 
 def get_images_paths(target_path, valid_extensions):
+    """Get all absolute paths in given directory"""
+
     paths_files_source = []
 
     for path, directories, files in os.walk(target_path):
         for filename in files:
             if filename.endswith(valid_extensions):
-                abspath = os.path.abspath(f"{target_path}\{filename}")
+                abspath = os.path.abspath(f"{target_path}\\{filename}")
                 paths_files_source.append(abspath)
 
     return paths_files_source
 
 
 def init_similar_images(paths_files_source):
+    """Return empty dictionary of lists, where keys are names of source images"""
+
     similar_images = {}
     for source_path_file in paths_files_source:
         similar_images[source_path_file] = []
@@ -45,6 +55,7 @@ def init_similar_images(paths_files_source):
 
 
 def get_similar_images(paths_files_source, paths_files_target, similarity_desired):
+    """Return populated dictionary of lists of paths of matched images"""
 
     similar_images = init_similar_images(paths_files_source)
 
@@ -81,6 +92,7 @@ def get_similar_images(paths_files_source, paths_files_target, similarity_desire
 
 
 def get_dir_path(image_path, dir_output):
+    """Get dir with dirs, witch will be populated by shortcuts"""
 
     filename = os.path.basename(image_path)
     path_to_shortcuts = f"{dir_output}\\{filename}"
@@ -89,12 +101,14 @@ def get_dir_path(image_path, dir_output):
 
 
 def create_dir_for_similar_images(path_to_shortcuts):
+    """Create dir if not exists"""
 
     if not os.path.isdir(path_to_shortcuts):
         os.mkdir(path_to_shortcuts)
 
 
 def get_path_for_shortcut(image, path_to_shortcuts):
+    """Return string path"""
 
     image_name = os.path.basename(image)
     path = os.path.join(path_to_shortcuts, f'{image_name}.lnk')
@@ -119,6 +133,7 @@ def create_shortcuts_of_similar_images(similar_images, dir_output):
 
 
 def create_shortcut(path, image):
+    """Windows OS crete shortcut"""
 
     head, tail = os.path.split(path)
     file_name, ext = os.path.splitext(tail)
@@ -143,66 +158,34 @@ def create_shortcut(path, image):
     shortcut.save()
 
 
-def find_similar_images(source_path, extensions_chosen, similarity, isLog, target_path):
+def find_similar_images(source_path, extensions_chosen, similarity, is_log, target_path):
+    """Main module function. It creates log and dirs with shortcutes to similar images"""
 
     extensions_possible = get_possible_extensions()
 
-    if not os.path.exists(source_path):
-        raise ValueError("Invalid folder path or file path.")
-    elif not source_path:
-        raise ValueError(
-            "You didn't provide any path for your images or single image.")
+    check_if_path_exists(source_path)
 
-    extensions_chosen = extensions_chosen.split(",")
-    if len(extensions_chosen) == 0:
-        raise ValueError(
-            f"No provided extensions: {extensions_possible}")
-    else:
-        for ext in extensions_chosen:
-            if ext not in extensions_possible:
-                raise ValueError(
-                    f"Extension {ext} is invalid.\n Look at: {extensions_possible}.")
+    extensions_chosen = get_list_extensions(extensions_chosen)
+    check_if_extensions_are_valid(extensions_chosen, extensions_possible)
 
-    similarity_error_message = "Invalid value, it should be between 0.0 and 1.0."
-    try:
-        similarity = float(similarity)
-    except ValueError:
-        raise ValueError(similarity_error_message)
-    if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
-        raise ValueError(similarity_error_message)
+    similarity = check_if_similarity_is_valid(similarity)
 
-    if not bool(int(isLog)) in [False, True]:
-        raise ValueError(f"Invalid isLog value: {isLog}")
+    check_if_is_log_valid(is_log)
 
-    if target_path is not None and target_path != "" and target_path != "Enter your target folder path...":
-        # print("target path_", target_path, "_")
-        if not os.path.isdir(target_path):
-            raise ValueError(
-                f"Invalid target images path, it's not a folder: {target_path}")
+    check_if_target_dir_is_valid(target_path)
 
-    extensions_chosen = tuple(extensions_chosen)
+    paths_files_source = get_paths_files_source(
+        source_path, extensions_possible, extensions_chosen)
 
-    if os.path.isfile(source_path):
-        if source_path.endswith(tuple(extensions_possible)):
-            paths_files_source = [source_path]
-        else:
-            raise ValueError(
-                f"Invalid source image/images path, it's not a file or folder: {target_path}")
-
-    else:
-        paths_files_source = get_images_paths(source_path, extensions_chosen)
-
-    if target_path is not None and target_path != "":
-        paths_files_target = get_images_paths(target_path, extensions_chosen)
-    else:
-        paths_files_target = paths_files_source.copy()
+    paths_files_target = get_paths_files_target(
+        target_path, extensions_chosen, paths_files_source)
 
     similar_images = get_similar_images(
         paths_files_source, paths_files_target, similarity)
 
     founded_images_folder = get_dir_output(source_path)
 
-    if isLog:
+    if is_log:
         Logger.create_log_of_similar_images(
             similar_images,
             similarity,
@@ -216,7 +199,80 @@ def find_similar_images(source_path, extensions_chosen, similarity, isLog, targe
     return founded_images_folder
 
 
+def get_list_extensions(extensions_chosen):
+    return extensions_chosen.split(",")
+
+
+def check_if_similarity_is_valid(similarity):
+    similarity_error_message = "Invalid value, it should be between 0.0 and 1.0."
+    try:
+        similarity = float(similarity)
+    except ValueError:
+        raise ValueError(similarity_error_message)
+    if not isinstance(similarity, float) or (float(similarity) < 0 or float(similarity) > 1):
+        raise ValueError(similarity_error_message)
+    return similarity
+
+
+def check_if_path_exists(source_path):
+    if not os.path.exists(source_path):
+        raise ValueError("Invalid folder path or file path.")
+    elif not source_path:
+        raise ValueError(
+            "You didn't provide any path for your images or single image.")
+
+
+def check_if_extensions_are_valid(extensions, extensions_possible):
+    if len(extensions) == 0:
+        raise ValueError(
+            f"No provided extensions: {extensions_possible}")
+    else:
+        for ext in extensions:
+            if ext not in extensions_possible:
+                raise ValueError(
+                    f"Extension {ext} is invalid.\n Look at: {extensions_possible}.")
+
+
+def check_if_is_log_valid(is_log):
+    if not bool(int(is_log)) in [False, True]:
+        raise ValueError(f"Invalid isLog value: {is_log}")
+
+
+def check_if_target_dir_is_valid(target_path):
+    if target_path is not None and target_path != "" and target_path != "Enter your target folder path... (Optional)":
+        if not os.path.isdir(target_path):
+            raise ValueError(
+                f"Invalid target images path, it's not a folder: {target_path}")
+
+
+def get_paths_files_source(source_path, extensions_possible, extensions_chosen):
+
+    extensions_chosen = tuple(extensions_chosen)
+
+    if os.path.isfile(source_path):
+        if source_path.endswith(tuple(extensions_possible)):
+            return [source_path]
+        else:
+            raise ValueError(
+                f"Invalid source image/images path, it's not a file or folder: {source_path}")
+
+    else:
+        return get_images_paths(source_path, extensions_chosen)
+
+
+def get_paths_files_target(target_path, extensions_chosen, paths_files_source):
+
+    extensions_chosen = tuple(extensions_chosen)
+
+    if target_path is not None and target_path != "":
+        paths_files_target = get_images_paths(target_path, extensions_chosen)
+    else:
+        paths_files_target = paths_files_source.copy()
+    return paths_files_target
+
+
 def get_possible_extensions():
+    """Get all valid extensions from config file"""
 
     config = Dialogs()
     config_DEFAULT = config.get_DEFAULT()
