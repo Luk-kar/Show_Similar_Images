@@ -25,10 +25,12 @@ class HowUse():
         label_font = 'Helvetica 9 bold'
 
         text = f"""
-1. Choose a folder with images to compare each image to another.
-2. Pick at least of one desired file extension checkbox.
-3. Write similarity value between 0.0 and 1.0
-4. If you want to log result, check if in Logs menu is: "{LogMenu.label_template(True)}"
+1. Choose a folder with images to compare each image to another,
+   or an image file/ images folder to compare with the target folder.
+2. (Optional) Choose target folder.
+3. Pick at least of one desired file extension checkbox.
+4. Write similarity value between 0.0 and 1.0
+5. If you want to log result, check if in Logs menu is: "{LogMenu.label_template(True)}"
 6. Finally, push the "Find similar images" button to find out results.
         """
         how_to_use_label = tk.Label(

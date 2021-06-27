@@ -27,12 +27,14 @@ You can also create your executable: [link](https://www.youtube.com/watch?v=UZX5
 
 ![main window](docs/images/How_to_use.png)
 
-1. Choose a folder with images to compare each image to another.
-2. Pick at least one desired file extension checkbox.
-3. Write similarity value between 0.0 and 1.0
-4. If you want to log result, check if in Logs menu is: `Save logs: True`
-5. Finally, push the "Find similar images" button to find out results.
-6. **Enjoy** the results!
+1. Choose a folder with images to compare each image to another,</br>
+   or an image file/ images folder to compare with the target folder.
+2. (Optional) Choose target folder.
+3. Pick at least one desired file extension checkbox.
+4. Write similarity value between 0.0 and 1.0
+5. If you want to log result, check if in Logs menu is: `Save logs: True`
+6. Finally, push the "Find similar images" button to find out the results.
+7. **Enjoy** the results!
 
 ## Setup 💾
 
@@ -73,7 +75,7 @@ used through the whole program
 ## Running the tests 🧪
 
 To run tests, write down in the terminal, in the program folder:
-`python tests`
+`python test.py`
 
 ## Built With 🧰
 
