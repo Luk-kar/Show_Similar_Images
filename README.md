@@ -21,6 +21,8 @@ If you want to use the console: [**How to use console**](docs/How_to_use_console
 
 You can also create your executable (exe): [link](https://www.youtube.com/watch?v=UZX5kH72Yx4)
 
+Or... use exe file from this repo
+
 ## Using UI version 👀
 
 ![main window](docs/images/How_to_use.png)
