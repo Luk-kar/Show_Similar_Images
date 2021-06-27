@@ -19,9 +19,7 @@ To run only the UI version you don't have to provide any arguments, just press t
 
 If you want to use the console: [**How to use console**](docs/How_to_use_console.md)
 
-standalone exe version of a program is here: [link](https://gofile.io/d/DlYQ0I)
-
-You can also create your executable: [link](https://www.youtube.com/watch?v=UZX5kH72Yx4)
+You can also create your executable (exe): [link](https://www.youtube.com/watch?v=UZX5kH72Yx4)
 
 ## Using UI version 👀
 
