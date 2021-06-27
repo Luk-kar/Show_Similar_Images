@@ -14,6 +14,7 @@ SIMILAR_IMAGES_FOLDER = "_similar images"
 
 
 def get_dir_output(target_path):
+    """Return string absolute path"""
 
     if not os.path.isdir(target_path):
         target_path = os.path.dirname(target_path)
@@ -174,10 +175,10 @@ def find_similar_images(source_path, extensions_chosen, similarity, is_log, targ
 
     check_if_target_dir_is_valid(target_path)
 
-    paths_files_source = get_paths_files_source(
+    paths_files_source = get_paths_images_source(
         source_path, extensions_possible, extensions_chosen)
 
-    paths_files_target = get_paths_files_target(
+    paths_files_target = get_paths_images_target(
         target_path, extensions_chosen, paths_files_source)
 
     similar_images = get_similar_images(
@@ -204,6 +205,8 @@ def get_list_extensions(extensions_chosen):
 
 
 def check_if_similarity_is_valid(similarity):
+    """Raise error if not true"""
+
     similarity_error_message = "Invalid value, it should be between 0.0 and 1.0."
     try:
         similarity = float(similarity)
@@ -215,6 +218,8 @@ def check_if_similarity_is_valid(similarity):
 
 
 def check_if_path_exists(source_path):
+    """Raise error if not true"""
+
     if not os.path.exists(source_path):
         raise ValueError("Invalid folder path or file path.")
     elif not source_path:
@@ -223,6 +228,8 @@ def check_if_path_exists(source_path):
 
 
 def check_if_extensions_are_valid(extensions, extensions_possible):
+    """Raise error if not true"""
+
     if len(extensions) == 0:
         raise ValueError(
             f"No provided extensions: {extensions_possible}")
@@ -234,18 +241,23 @@ def check_if_extensions_are_valid(extensions, extensions_possible):
 
 
 def check_if_is_log_valid(is_log):
+    """Raise error if not true"""
+
     if not bool(int(is_log)) in [False, True]:
         raise ValueError(f"Invalid isLog value: {is_log}")
 
 
 def check_if_target_dir_is_valid(target_path):
+    """Raise error if not true"""
+
     if target_path is not None and target_path != "" and target_path != "Enter your target folder path... (Optional)":
         if not os.path.isdir(target_path):
             raise ValueError(
                 f"Invalid target images path, it's not a folder: {target_path}")
 
 
-def get_paths_files_source(source_path, extensions_possible, extensions_chosen):
+def get_paths_images_source(source_path, extensions_possible, extensions_chosen):
+    """Raise error if not true"""
 
     extensions_chosen = tuple(extensions_chosen)
 
@@ -260,7 +272,8 @@ def get_paths_files_source(source_path, extensions_possible, extensions_chosen):
         return get_images_paths(source_path, extensions_chosen)
 
 
-def get_paths_files_target(target_path, extensions_chosen, paths_files_source):
+def get_paths_images_target(target_path, extensions_chosen, paths_files_source):
+    """Raise error if not true"""
 
     extensions_chosen = tuple(extensions_chosen)
 
