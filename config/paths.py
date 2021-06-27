@@ -1,3 +1,7 @@
+"""
+Most essentail program's paths
+"""
+
 import os
 import sys
 

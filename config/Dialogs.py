@@ -1,4 +1,3 @@
-import sys
 import os
 from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
@@ -7,6 +6,8 @@ from .paths import get_AppData_folder_path, get_DEFAULTS_folder_path
 
 
 class Dialogs:
+    """Module responsible for populating UI dialogs"""
+
     def __init__(self):
         self.AppData_folder_path = get_AppData_folder_path()
         self.DEFAULTS_folder_path = get_DEFAULTS_folder_path(
@@ -18,10 +19,18 @@ class Dialogs:
         )
 
     def get_dialogs_path_save(self):
-        return filedialog.asksaveasfilename(initialdir=self.AppData_folder_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.asksaveasfilename(
+            initialdir=self.AppData_folder_path,
+            title="Save setup file",
+            filetypes=[("Setup files", "*.ini")]
+        )
 
     def get_dialogs_path_open(self):
-        return filedialog.askopenfilename(initialdir=self.AppData_folder_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.askopenfilename(
+            initialdir=self.AppData_folder_path,
+            title="Open setup file",
+            filetypes=[("Setup files", "*.ini")]
+        )
 
     @staticmethod
     def saving_dialogs_to_file(
@@ -107,7 +116,7 @@ class Dialogs:
         self.saving_dialogs_to_file(
             DIALOGS_path,
             checkedboxes,
-            target_path,
             source_path,
+            target_path,
             similarity
         )
