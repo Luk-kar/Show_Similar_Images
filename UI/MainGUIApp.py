@@ -1,7 +1,5 @@
 import os
-import sys
 import tkinter as tk
-from configparser import ConfigParser
 from tkinter import filedialog  # for Python 3
 from tkinter import messagebox
 
@@ -17,6 +15,8 @@ from .MenuBar.MenuBar import MenuBar
 
 
 class Main:
+    """UI version of app"""
+
     def __init__(self, master):
         self.master = master
 
@@ -44,9 +44,15 @@ class Main:
         self.source_path_entry = EntryWithPlaceholder(
             self.frame, self.source_placeholder)
         self.source_path_entry.grid(
-            row=1, column=0, ipadx=entry_width, stick="we")
-        self.set_entry_value(self.source_path_entry,
-                             config.get_source_path(config_DEFAULT))
+            row=1,
+            column=0,
+            ipadx=entry_width,
+            stick="we"
+        )
+        self.set_entry_value(
+            self.source_path_entry,
+            config.get_source_path(config_DEFAULT)
+        )
 
         # source open folder
         self.img_open_folder = tk.PhotoImage(
@@ -55,7 +61,11 @@ class Main:
             self.frame, command=self.source_folder_open)
         self.button_choose_source_folder.config(image=self.img_open_folder)
         self.button_choose_source_folder.grid(
-            column=1, row=1, padx=(5, 0), stick="w")
+            column=1,
+            row=1,
+            padx=(5, 0),
+            stick="w"
+        )
 
         # source open file
         self.img_open_file = tk.PhotoImage(
@@ -64,7 +74,11 @@ class Main:
             self.frame, command=self.source_file_open)
         self.button_choose_source_file.config(image=self.img_open_file)
         self.button_choose_source_file.grid(
-            column=2, row=1, padx=(5, 0), stick="w")
+            column=2,
+            row=1,
+            padx=(5, 0),
+            stick="w"
+        )
 
         # target title
         self.target_path_title = tk.Label(
@@ -78,29 +92,55 @@ class Main:
             self.target_placeholder
         )
         self.target_path_entry.grid(
-            row=3, column=0, ipadx=entry_width, stick="we")
-        self.set_entry_value(self.target_path_entry,
-                             config.get_target_path(config_DEFAULT))
+            row=3,
+            column=0,
+            ipadx=entry_width,
+            stick="we"
+        )
+        self.set_entry_value(
+            self.target_path_entry,
+            config.get_target_path(config_DEFAULT)
+        )
 
         # target open folder
         self.button_choose_target_folder = tk.Button(
-            self.frame, command=self.target_folder_open)
+            self.frame,
+            command=self.target_folder_open
+        )
         self.button_choose_target_folder.config(image=self.img_open_folder)
         self.button_choose_target_folder.grid(
-            column=1, row=3, padx=(5, 0), stick="w")
+            column=1,
+            row=3,
+            padx=(5, 0),
+            stick="w"
+        )
 
         # Extensions title
         self.extensions_title = tk.Label(self.frame, text="Extensions:")
-        self.extensions_title.grid(row=4, column=0, pady=(15, 0), stick="w")
+        self.extensions_title.grid(
+            row=4,
+            column=0,
+            pady=(15, 0),
+            stick="w"
+        )
 
         # Extensions checkbars
         self.extensions = config.get_checked_extensions(config_DEFAULT)
         self.checkbars = Checkbar(self.frame, self.extensions)
-        self.checkbars.grid(row=5, column=0, pady=(0, 15), stick="w")
+        self.checkbars.grid(
+            row=5,
+            column=0,
+            pady=(0, 15),
+            stick="w"
+        )
 
         # similarity title
         self.similarity_title = tk.Label(self.frame, text="Similarity:")
-        self.similarity_title.grid(row=6, column=0, stick="w")
+        self.similarity_title.grid(
+            row=6,
+            column=0,
+            stick="w"
+        )
 
         # similarity entry
         self.similarity_entry = EntryWithPlaceholder(
@@ -111,14 +151,22 @@ class Main:
 
         # Run program button
         self.button_run_program = tk.Button(
-            self.master, text='Find similar images', width=25, bg="#f5f5f5", command=self.run_matching_images)
+            self.master, text='Find similar images',
+            width=25, bg="#f5f5f5",
+            command=self.run_matching_images
+        )
         self.button_run_program.grid(
-            row=1, column=0, pady=(0, 15), padx=10, stick="we")
+            row=1,
+            column=0,
+            pady=(0, 15),
+            padx=10,
+            stick="we"
+        )
         self.button_run_program.config(height=2)
 
         self.frame.grid(row=0, column=0)
 
-        menubar = MenuBar(self.master, self)
+        MenuBar(self.master, self)
 
     def source_folder_open(self):
 
@@ -128,7 +176,7 @@ class Main:
 
         self.get_folder_path(self.target_path_entry, "Target folder")
 
-    def get_folder_path(self, entry, title):  # todo
+    def get_folder_path(self, entry, title):
 
         chosen_directory = self.btn_find_path(entry,
                                               lambda: filedialog.askdirectory(
@@ -139,15 +187,15 @@ class Main:
             count = self.check_how_many_valid_files(chosen_directory)
 
             if not self.get_extensions():
-                return messagebox.showwarning(
-                    "Failed!", f"You did NOT choose any file extensions!")
+                messagebox.showwarning(
+                    "Failed!", "You did NOT choose any file extensions!")
 
             if count:
                 messagebox.showwarning(
                     "Success!", f"There are {count} images to check in folder!")
             else:
                 messagebox.showwarning(
-                    "Failed!", f"There are NO, NADA, ZERO, ZINCH, 0\nimages to check in folder!")
+                    "Failed!", "There are NO, NADA, ZERO, ZINCH, 0\nimages to check in folder!")
 
     def source_file_open(self):
 
@@ -196,14 +244,14 @@ class Main:
         target_path = self.target_path_entry.get()
         similarity = self.similarity_entry.get()
 
-        isLog = self.isLogging()
+        is_log = self.is_logging()
 
         try:
             founded_images_folder = find_similar_images(
                 source_path,
                 valid_extensions,
                 similarity,
-                isLog,
+                is_log,
                 target_path
             )
             messagebox.showinfo(
@@ -212,13 +260,13 @@ class Main:
         except ValueError as e:
             messagebox.showerror("Error!", e)
 
-    def isLogging(self):
+    def is_logging(self):
 
         logger = Logger()
         if not os.path.exists(logger.file_path):
             logger.create_DEFAULT_file()
-        isLog = bool(logger.read_writing_status())
-        return isLog
+        is_log = bool(logger.read_writing_status())
+        return is_log
 
     def get_extensions(self):
 
