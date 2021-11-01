@@ -6,10 +6,7 @@
 </br>
 </div>
 
-![how_program_works_image_folder](docs/images/how_it_works_001.png)
-![how_program_works_similar_image_folder](docs/images/how_it_works_002.png)
-![how_program_works_founded_images](docs/images/how_it_works_003.png)
-![how_program_works_founded_images_log](docs/images/how_it_works_004.png)
+![how_program_works](docs/images/how_it_works.gif)
 
 ## Getting Started 💡
 
