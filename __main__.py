@@ -1,3 +1,31 @@
+"""
+NAME
+
+    Show_Images_Differences
+
+DESCRIPTION
+
+    Creating list of similar images
+    ========================================
+
+    Find_Similar_Images is used for to find:
+    1) similar images withing particular folder
+    2) similar images between folders
+    3) list of similar images to particular chosen file within target folder.
+
+    Usecase example:
+    find similar images within UI assets.
+
+    Of course, it can be used for any other matching images purposes
+
+    This program uses image recognition algorithms from https://image-match.readthedocs.io
+
+AUTHOR
+
+    Karol Łukaszczyk
+    e-mail: lukkarcontact@gmail.com
+"""
+
 import sys
 
 from config.Dialogs import Dialogs as DefaultArgs
@@ -7,10 +35,27 @@ from UI.MainGUIApp import MainGUIApp
 
 
 def run_GUI():
+    """If args are not provided for program, runs GUI version"""
     MainGUIApp()
 
 
 def run_console(_argv):
+    """if program args provided"""
+
+    source_path, chosen_extensions, similarity, isLog, target_path = parsing_program_args(
+        _argv)
+
+    find_similar_images(
+        source_path,
+        chosen_extensions,
+        similarity,
+        isLog,
+        target_path
+    )
+
+
+def parsing_program_args(_argv):
+    """checking if args are valid and changing args types to accurate ones"""
 
     config = DefaultArgs()
     config_default = config.get_DEFAULT()
@@ -35,22 +80,15 @@ def run_console(_argv):
 
     if len(_argv) <= 4:
         logger = Logger()
-        isLog = bool(logger.read_writing_status())
+        is_log = bool(logger.read_writing_status())
     else:
-        isLog = bool(int(_argv[4]))
+        is_log = bool(int(_argv[4]))
 
     if len(_argv) <= 5:
         target_path = None
     else:
         target_path = _argv[5]
-
-    find_similar_images(
-        source_path,
-        chosen_extensions,
-        similarity,
-        isLog,
-        target_path
-    )
+    return source_path, chosen_extensions, similarity, is_log, target_path
 
 
 if __name__ == "__main__":

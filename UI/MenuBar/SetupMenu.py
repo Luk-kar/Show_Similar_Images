@@ -42,12 +42,14 @@ class SetupMenu(tk.Menu):
 
         if DIALOGS_path:
             checkedboxes = list(window.checkbars.state())
+            source_path = window.source_path_entry.get()
             target_path = window.target_path_entry.get()
             similarity = float(window.similarity_entry.get())
 
             self.dialogs.saving_dialogs_to_file(
                 DIALOGS_path,
                 checkedboxes,
+                source_path,
                 target_path,
                 similarity
             )
@@ -92,12 +94,14 @@ class SetupMenu(tk.Menu):
             os.mkdir(DEFAULTS_folder)
 
         checkedboxes = list(window.checkbars.state())
+        source_path = window.source_path_entry.get()
         target_path = window.target_path_entry.get()
         similarity = float(window.similarity_entry.get())
 
         self.dialogs.saving_dialogs_to_file(
             DEFAULT_DIALOGS,
             checkedboxes,
+            source_path,
             target_path,
             similarity
         )
@@ -140,8 +144,13 @@ class SetupMenu(tk.Menu):
 
         window = self.window
 
+        window.source_path_entry = window.entry_set(
+            window.source_path_entry, self.dialogs.get_source_path(
+                config)
+        )
+
         window.target_path_entry = window.entry_set(
-            window.target_path_entry, self.dialogs.get_images_folder_path(
+            window.target_path_entry, self.dialogs.get_target_path(
                 config)
         )
 

@@ -1,4 +1,3 @@
-import sys
 import os
 from tkinter import filedialog  # for Python 3
 from configparser import ConfigParser
@@ -7,6 +6,8 @@ from .paths import get_AppData_folder_path, get_DEFAULTS_folder_path
 
 
 class Dialogs:
+    """Module responsible for populating UI dialogs"""
+
     def __init__(self):
         self.AppData_folder_path = get_AppData_folder_path()
         self.DEFAULTS_folder_path = get_DEFAULTS_folder_path(
@@ -18,15 +19,24 @@ class Dialogs:
         )
 
     def get_dialogs_path_save(self):
-        return filedialog.asksaveasfilename(initialdir=self.AppData_folder_path, title="Save setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.asksaveasfilename(
+            initialdir=self.AppData_folder_path,
+            title="Save setup file",
+            filetypes=[("Setup files", "*.ini")]
+        )
 
     def get_dialogs_path_open(self):
-        return filedialog.askopenfilename(initialdir=self.AppData_folder_path, title="Open setup file", filetypes=[("Setup files", "*.ini")])
+        return filedialog.askopenfilename(
+            initialdir=self.AppData_folder_path,
+            title="Open setup file",
+            filetypes=[("Setup files", "*.ini")]
+        )
 
     @staticmethod
     def saving_dialogs_to_file(
             DIALOGS_path,
             checkedboxes,
+            source_path,
             target_path,
             similarity
     ):
@@ -34,7 +44,8 @@ class Dialogs:
         config = ConfigParser()
 
         config["MATCHING"] = {
-            "images path": target_path,
+            "source path": source_path,
+            "target path": target_path
         }
 
         config["FILE TYPES"] = {
@@ -77,8 +88,12 @@ class Dialogs:
         return config
 
     @staticmethod
-    def get_images_folder_path(config):
-        return config.get("MATCHING", "images path")
+    def get_source_path(config):
+        return config.get("MATCHING", "source path")
+
+    @staticmethod
+    def get_target_path(config):
+        return config.get("MATCHING", "target path")
 
     @staticmethod
     def get_similarity(config):
@@ -92,14 +107,16 @@ class Dialogs:
 
         DIALOGS_path = self.DEFAULT_file_path
 
-        valid_extensions = [[".png", 1], [".jpg/.jpeg", 0], [".bmp", 0]]
+        valid_extensions = [[".png", 1], [".jpg/.jpeg/.jpe", 0], [".bmp", 0]]
         checkedboxes = list(map(lambda x: x[1], valid_extensions))
+        source_path = ""
         target_path = ""
         similarity = 0.8
 
         self.saving_dialogs_to_file(
             DIALOGS_path,
             checkedboxes,
+            source_path,
             target_path,
             similarity
         )

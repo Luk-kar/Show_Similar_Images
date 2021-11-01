@@ -2,6 +2,8 @@ import tkinter as tk
 
 
 class Checkbar(tk.Frame):
+    """Template for checkbox"""
+
     def __init__(self, parent=None, picks=[], side="left", anchor="w"):
         tk.Frame.__init__(self, parent)
         self.vars = []

@@ -2,6 +2,11 @@ import tkinter as tk
 
 
 class EntryWithPlaceholder(tk.Entry):
+    """
+    Template for tk entry
+    https://stackoverflow.com/a/47928390/12490791
+    """
+
     def __init__(self, master=None, placeholder="PLACEHOLDER", color='grey'):
         super().__init__(master)
 
