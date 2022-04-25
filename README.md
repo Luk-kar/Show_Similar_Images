@@ -84,10 +84,6 @@ To run tests, write down in the terminal, in the program folder:
 
 - [**image-match**](https://image-match.readthedocs.io/en/latest/index.html)
 
-## Structure of the code 🧭
-
-[**Flow diagram**](docs/images/simpified_model_of_program.png)
-
 ## Contributing 📬
 
 Please read [**CONTRIBUTING.md**](docs/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us
